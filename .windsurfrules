@@ -1,0 +1,95 @@
+# Project-Specific AI Rules for My Awesome App
+
+These rules guide the Windsurf AI for all code generation and modifications within this project.
+
+## 1. Core Principles
+
+- **Frontend Technologies:** Next.js (App Router), TypeScript, Tailwind CSS, Shadcn UI, React-Lucide for icons, React Query v5 for server state management, Zustand for local state.
+- **Backend & Database Technologies:** Next.js API Routes and Server Actions for server-side logic, Supabase as the backend-as-a-service (leveraging its PostgreSQL database), and Prisma ORM for all database interactions.
+- **Code Quality Philosophy:** Prioritize readability, maintainability, type safety, and reusability. Aim for modular and well-structured code.
+- **Security First:** Implement standard security best practices by default, including input validation, proper authentication/authorization, and protection against common vulnerabilities.
+
+---
+
+## 2. Code Style & Formatting Rules
+
+- **Formatting:** All code should be automatically formatted using Prettier. Assume Prettier is configured with typical defaults (e.g., 2-space indentation, semicolons, single quotes where appropriate).
+- **Comments:** Use standard `//` for single-line comments and `/* */` for multi-line comments.
+- **TypeScript:** Leverage type inference, but ensure explicit types are provided for function parameters, return values of public APIs, and component props for clarity and type safety.
+
+---
+
+## 3. Testing Strategy & Tools
+
+- **Frameworks:** Utilize Jest as the primary testing framework.
+- **Libraries:** Use React Testing Library for testing React components, focusing on user-centric interactions and behavior.
+- **Test Types:**
+  - **Unit Tests:** Implement unit tests for individual functions, utilities, and isolated components.
+  - **Integration Tests:** Write integration tests for API routes, database interactions (via Prisma/Supabase), and interconnected components.
+  - **UI Testing:** Conduct UI testing using React Testing Library to ensure components render correctly and user interactions behave as expected.
+
+---
+
+## 4. Naming Conventions
+
+- **React Components:** Use `PascalCase` (e.g., `UserProfile`, `ProductCard`).
+- **JavaScript Variables/Functions:** Use `camelCase` (e.g., `userName`, `fetchProducts`).
+- **CSS Classes (if not using Tailwind):** Use `kebab-case` (e.g., `user-profile-card`).
+- **Database Tables/Columns:** Use `snake_case` (e.g., `user_products`, `order_items`).
+- **TypeScript Interfaces:** Use an `I` prefix (e.g., `IUser`, `IProduct`).
+
+---
+
+## 5. File Structure & Organization Rules
+
+- **Root Structure**:
+
+  - `/src/app` - Next.js App Router pages and layouts
+  - `/src/components` - Reusable UI components
+  - `/src/hooks` - Custom React hooks
+  - `/src/lib` - Utilities, configurations, and shared logic
+  - `/src/providers` - React context providers
+  - `/prisma` - Database schema and migrations
+  - `/public` - Static assets
+
+- **Domain Organization**:
+
+  - Organize feature-specific code within the `/src/app` directory using Next.js route groups
+  - Group related components in `/src/components` by feature (e.g., `auth`, `chat`, `ui`)
+  - Keep shared utilities and configurations in `/src/lib`
+  - Place database models and migrations in `/prisma`
+
+- **Component Structure**:
+
+  - Use PascalCase for component files (e.g., `MessageBubble.tsx`)
+  - Co-locate component-specific styles and types when possible
+  - Group related components in feature-specific directories
+
+- **State Management**:
+
+  - Use React Context for global state that's needed across multiple components
+  - Consider Zustand for complex client-side state management
+  - Use React Query for server state management
+
+- **Styling**:
+  - Use Tailwind CSS for styling
+  - Keep global styles in `/src/globals.css`
+  - Follow the Shadcn UI component patterns for consistency
+
+---
+
+## 6. Authentication & Authorization
+
+- **Supabase Authentication:** Use Supabase for user authentication.
+- **Login Methods:** Implement both Google login and traditional username/password login.
+- **Authorization:**
+  - Start with Supabase's Row-Level Security (RLS) to enforce basic access control at the database level.
+  - Plan for more robust Role-Based Access Control (RBAC) implementation in the future.
+
+---
+
+## 7. General Guidelines
+
+- **Logging:** Implement a comprehensive logging strategy from the start. All significant application events, API requests, and errors should be logged for debugging and monitoring.
+- **Localization & Internationalization (i18n):** Support for multiple languages and locales is a high priority. Design components and data structures with i18n in mind from the outset. Utilize a suitable **Next.js App Router i18n solution (e.g., `next-intl`)**.
+- **Error Handling:** Implement a consistent and centralized error handling pattern across both frontend and backend. API errors should return descriptive JSON payloads with appropriate HTTP status codes.
