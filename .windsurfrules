@@ -2,6 +2,13 @@
 
 These rules guide the Windsurf AI for all code generation and modifications within this project.
 
+**For any context about te project, always refer to the following documents:**
+
+- [Product Requirements Document (PRD)](docs/prd.md)
+- [User Journey Document](docs/user_journey.md)
+- [Database Design Document](docs/db_design.md)
+- [Task Maps with dependencies](docs/task_maps.md)
+
 ## 1. Core Principles
 
 - **Frontend Technologies:** Next.js (App Router), TypeScript, Tailwind CSS, Shadcn UI, React-Lucide for icons, React Query v5 for server state management, Zustand for local state.

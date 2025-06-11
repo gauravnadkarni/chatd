@@ -7,6 +7,186 @@ generator client {
 
 datasource db {
   provider  = "postgresql"
-  url       = env("DATABASE_URL")
+  url       = env("TRANSACTION_POOLER_DATABASE_URL")
   directUrl = env("DIRECT_DATABASE_URL")
+}
+
+model Profile {
+  id         String    @id @map("id") @db.Uuid // Matches auth.users.id (via DB constraint/convention)
+  updated_at DateTime? @updatedAt @map("updated_at") @db.Timestamptz(6)
+  username   String?   @unique
+  full_name  String?   @map("full_name")
+  avatar_url String?   @map("avatar_url")
+  website    String?
+  is_admin   Boolean   @default(false) @map("is_admin")
+  online_at  DateTime? @map("online_at") @db.Timestamptz(6)
+
+  // Relationships defined from this Profile model (no direct relation to an external 'User' model anymore)
+  // You will handle the link to auth.users directly via the 'id' field in application logic.
+  // @@schema("public") - 'public' is default, can be omitted, but kept for clarity if needed
+
+  @@map("profiles")
+}
+
+// Represents the 'public.user_device_tokens' table.
+// Stores FCM tokens for push notifications.
+model UserDeviceToken {
+  id           Int      @id @default(autoincrement())
+  user_id      String   @map("user_id") @db.Uuid // This links to auth.users.id via DB, but not Prisma relation
+  fcm_token    String   @unique @map("fcm_token")
+  platform     String? // e.g., 'web', 'android', 'ios'
+  last_seen_at DateTime @default(now()) @map("last_seen_at") @db.Timestamptz(6)
+
+  // Removed: relation to User model
+  // @@schema("public")
+
+  @@map("user_device_tokens")
+}
+
+// ====================================================================
+// Contact Management Models
+// ====================================================================
+
+// Represents the 'public.contacts' table.
+// Stores established mutual contact relationships between users.
+model Contact {
+  id         Int    @id @default(autoincrement())
+  user_id    String @map("user_id") @db.Uuid // Links to auth.users.id (DB-managed FK)
+  contact_id String @map("contact_id") @db.Uuid // Links to auth.users.id (DB-managed FK)
+
+  // Removed: relations to User model
+  // @@schema("public")
+
+  @@unique([user_id, contact_id])
+  @@map("contacts")
+}
+
+// Enum for contact request statuses
+enum ContactRequestStatus {
+  pending
+  accepted
+  declined
+  blocked
+}
+
+// Represents the 'public.contact_requests' table.
+// Stores pending, accepted, declined, or blocked contact requests.
+model ContactRequest {
+  id           Int                  @id @default(autoincrement())
+  sender_id    String               @map("sender_id") @db.Uuid // Links to auth.users.id (DB-managed FK)
+  recipient_id String               @map("recipient_id") @db.Uuid // Links to auth.users.id (DB-managed FK)
+  status       ContactRequestStatus @default(pending)
+  created_at   DateTime             @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  // Removed: relations to User model
+  // @@schema("public")
+
+  @@unique([sender_id, recipient_id]) // Ensures a unique pending request between two users
+  @@map("contact_requests")
+}
+
+// ====================================================================
+// Group Chat Models
+// ====================================================================
+
+// Represents the 'public.groups' table.
+// Stores information about chat groups.
+model Group {
+  id         String   @id @default(uuid()) @db.Uuid // UUID primary key for groups
+  name       String
+  creator_id String   @map("creator_id") @db.Uuid // Links to auth.users.id (DB-managed FK)
+  avatar_url String?  @map("avatar_url")
+  created_at DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  // Removed: relation to User model
+  memberships                 GroupMember[]
+  messages                    Message[]
+  group_conversation_statuses UserConversationStatus[] @relation("GroupStatus") // Link to conversation status for this group
+  // @@schema("public")
+
+  @@map("groups")
+}
+
+// Enum for group member roles
+enum GroupMemberRole {
+  member
+  admin
+}
+
+// Represents the 'public.group_members' table.
+// Stores which users belong to which groups and their roles.
+model GroupMember {
+  id        Int             @id @default(autoincrement())
+  group_id  String          @map("group_id") @db.Uuid
+  member_id String          @map("member_id") @db.Uuid // Links to auth.users.id (DB-managed FK)
+  role      GroupMemberRole @default(member)
+  joined_at DateTime        @default(now()) @map("joined_at") @db.Timestamptz(6)
+
+  group Group @relation(fields: [group_id], references: [id], onDelete: Cascade)
+  // Removed: relation to User model
+  // @@schema("public")
+
+  @@unique([group_id, member_id]) // Ensures a user can only be a member of a group once
+  @@map("group_members")
+}
+
+// ====================================================================
+// Messaging Models
+// ====================================================================
+
+// Represents the 'public.messages' table.
+// Stores all chat messages (both 1:1 and group).
+model Message {
+  id                String    @id @default(uuid()) @db.Uuid
+  sender_id         String    @map("sender_id") @db.Uuid // Links to auth.users.id (DB-managed FK)
+  group_id          String?   @map("group_id") @db.Uuid // Null for 1-on-1 chats
+  recipient_id      String?   @map("recipient_id") @db.Uuid // Null for group chats, Links to auth.users.id (DB-managed FK)
+  content           String? // Message text
+  media_url         String?   @map("media_url")
+  media_type        String?   @map("media_type") // e.g., 'image/jpeg', 'application/pdf'
+  sent_at           DateTime  @default(now()) @map("sent_at") @db.Timestamptz(6)
+  read_at           DateTime? @map("read_at") @db.Timestamptz(6)
+  deleted_by_sender Boolean   @default(false) @map("deleted_by_sender") // Soft delete for sender
+
+  // Removed: relations to User model for sender/recipient
+  group Group? @relation(fields: [group_id], references: [id], onDelete: Cascade)
+
+  // NOTE: Prisma cannot directly enforce an XOR constraint (group_id XOR recipient_id must be non-null).
+  // This must be handled by application logic and/or database constraints/triggers.
+  // @@schema("public")
+  UserConversationStatus UserConversationStatus[]
+
+  @@index([group_id]) // Index for faster retrieval of group messages
+  @@index([recipient_id]) // Index for faster retrieval of 1:1 messages
+  @@map("messages")
+}
+
+// ====================================================================
+// Conversation Status & Tracking Models
+// ====================================================================
+
+// Represents the 'public.user_conversation_status' table.
+// Tracks user-specific status for each conversation (e.g., last seen message, unread count).
+model UserConversationStatus {
+  id                   Int      @id @default(autoincrement())
+  user_id              String   @map("user_id") @db.Uuid // Links to auth.users.id (DB-managed FK)
+  group_id             String?  @map("group_id") @db.Uuid // For group conversations
+  other_participant_id String?  @map("other_participant_id") @db.Uuid // For 1:1 conversations, links to auth.users.id (DB-managed FK)
+  last_seen_message_id String?  @map("last_seen_message_id") @db.Uuid
+  unread_count         Int      @default(0) @map("unread_count")
+  updated_at           DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  // Removed: relations to User model for user_id and other_participant_id
+  group             Group?   @relation("GroupStatus", fields: [group_id], references: [id], onDelete: Cascade)
+  last_seen_message Message? @relation(fields: [last_seen_message_id], references: [id], onDelete: SetNull) // If message is deleted, status becomes null
+  // NOTE: Application logic must ensure that for a given entry,
+  // either `group_id` OR `other_participant_id` is non-null, but not both.
+  // @@schema("public")
+
+  // Composite unique constraints:
+  // Ensures a user has only one status entry for a specific group.
+  @@unique([user_id, group_id])
+  // Ensures a user has only one status entry for a specific 1:1 conversation partner.
+  @@unique([user_id, other_participant_id])
+  @@map("user_conversation_status")
 }
