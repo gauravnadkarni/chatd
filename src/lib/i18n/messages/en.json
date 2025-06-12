@@ -1,5 +1,61 @@
 {
   "common": {
-    "appName": "PropulseKit"
+    "appName": "Chatd"
+  },
+  "landingPage": {
+    "title": "Chatd",
+    "description": "Chatd is a simple, secure, and beautiful messaging app for everyone. Start chatting in seconds.",
+    "button": "Get Started",
+    "cta": "Connect with friends",
+    "ctaDescription": "Simple, secure, and beautiful messaging for everyone. Start chatting in seconds.",
+    "messages": {
+      "message1": "Hey! How's your day going?",
+      "message2": "Great! Just finished work. What about you?",
+      "message3": "Same here! Want to grab coffee later?",
+      "message4": "Absolutely! See you at 5?"
+    },
+    "auth": {
+      "signinTitle": "Welcome back",
+      "signinDescription": "Sign in to your account to continue",
+      "signinEmailContinueMessage": "OR CONTINUE WITH EMAIL",
+      "signupTitle": "Create account",
+      "signupDescription": "Join thousands of users already chatting",
+      "signupEmailContinueMessage": "OR CONTINUE WITH EMAIL",
+      "buttons": {
+        "googleText": "Continue with Google",
+        "facebookText": "Continue with Facebook"
+      },
+      "signin": {
+        "emailLabel": "Email",
+        "passwordLabel": "Password",
+        "emailPlaceholder": "Enter your email",
+        "passwordPlaceholder": "Enter your password",
+        "rememberMe": "Remember me",
+        "forgotPassword": "Forgot password?",
+        "signInButtonText": "Sign In"
+      },
+      "signup": {
+        "fullNameLabel": "Full Name",
+        "fullNamePlaceholder": "Enter your full name",
+        "emailLabel": "Email",
+        "emailPlaceholder": "Enter your email",
+        "passwordLabel": "Password",
+        "passwordPlaceholder": "Create a password",
+        "confirmPasswordLabel": "Confirm Password",
+        "confirmPasswordPlaceholder": "Confirm your password",
+        "signUpButtonText": "Create Account",
+        "iAgreeToThe": "I agree to the",
+        "termsOfService": "Terms of Service",
+        "and": "and",
+        "privacyPolicy": "Privacy Policy"
+      }
+    },
+    "header": {
+      "signinButtonText": "Sign In",
+      "signupButtonText": "Sign Up"
+    },
+    "footer": {
+      "copyright": "© {year} Chatd. All rights reserved."
+    }
   }
 }
