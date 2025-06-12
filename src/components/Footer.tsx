@@ -9,15 +9,17 @@ export const Footer = () => {
     {
       label: "Twitter",
       href: "https://x.com/gauravnadkarni",
-      icon: <FontAwesomeIcon icon={faXTwitter} size="lg" color="black" />,
+      icon: (
+        <FontAwesomeIcon icon={faXTwitter} size="lg" className="text-current" />
+      ),
     },
   ];
   const footerTranslations = useTranslations("landingPage.footer");
   return (
-    <footer className="w-full border-t border-white/20 bg-white/10 backdrop-blur-sm mt-auto">
+    <footer className="w-full border-t border-border border-secondary mt-auto">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          <div className="text-sm text-white/80">
+          <div className="text-sm text-muted-foreground">
             {footerTranslations("copyright", {
               year: new Date().getFullYear(),
             })}
@@ -30,7 +32,7 @@ export const Footer = () => {
                   href={link.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-white/80 hover:text-white transition-colors duration-200"
+                  className="text-muted-foreground hover:text-foreground transition-colors duration-200"
                   aria-label={link.label}
                 >
                   {link.icon}

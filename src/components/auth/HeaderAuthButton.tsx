@@ -19,11 +19,7 @@ export const HeaderAuthButton = ({
     <Button
       variant={isActive ? "default" : "outline"}
       onClick={onClick}
-      className={
-        isActive
-          ? "bg-white text-blue-600 hover:bg-white/90"
-          : "border-white/30 text-white hover:bg-white/10 hover:border-white/50"
-      }
+      className={isActive ? "" : ""}
       aria-label={ariaLabel}
     >
       {label}

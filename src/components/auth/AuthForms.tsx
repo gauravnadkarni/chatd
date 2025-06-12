@@ -34,7 +34,7 @@ export function AuthForms() {
     <div className="space-y-3">
       <Button
         variant="outline"
-        className="w-full"
+        className="w-full border-border hover:bg-accent hover:text-accent-foreground"
         onClick={() => handleSocialLogin("google")}
       >
         <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
@@ -60,7 +60,7 @@ export function AuthForms() {
 
       <Button
         variant="outline"
-        className="w-full"
+        className="w-full border-border hover:bg-accent hover:text-accent-foreground"
         onClick={() => handleSocialLogin("facebook")}
       >
         <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
@@ -81,12 +81,12 @@ export function AuthForms() {
               : "opacity-100 transform translate-y-0"
           }`}
         >
-          <Card className="w-full max-w-md mx-auto bg-white/95 backdrop-blur-sm shadow-2xl border-white/20">
+          <Card className="w-full max-w-md mx-auto glass-effect shadow-2xl">
             <CardHeader className="space-y-1">
-              <CardTitle className="text-2xl font-bold text-center text-gray-900">
+              <CardTitle className="text-2xl font-bold text-center text-heading">
                 {authFormTranslations("signinTitle")}
               </CardTitle>
-              <CardDescription className="text-center text-gray-600">
+              <CardDescription className="text-center text-sub">
                 {authFormTranslations("signinDescription")}
               </CardDescription>
             </CardHeader>
@@ -98,7 +98,7 @@ export function AuthForms() {
                   <Separator className="w-full" />
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-white px-2 text-gray-500">
+                  <span className="bg-card px-2 text-muted-foreground">
                     {authFormTranslations("signinEmailContinueMessage")}
                   </span>
                 </div>
@@ -106,40 +106,40 @@ export function AuthForms() {
 
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="email" className="text-gray-700">
+                  <Label htmlFor="email" className="text-foreground">
                     {authFormTranslations("signin.emailLabel")}
                   </Label>
                   <div className="relative">
-                    <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                    <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                     <Input
                       id="email"
                       type="email"
                       placeholder={authFormTranslations(
                         "signin.emailPlaceholder"
                       )}
-                      className="pl-10 bg-white border-gray-300 text-gray-900 placeholder-gray-500"
+                      className="pl-10 bg-input border-border text-foreground placeholder:text-muted-foreground focus-ring"
                     />
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="password" className="text-gray-700">
+                  <Label htmlFor="password" className="text-foreground">
                     {authFormTranslations("signin.passwordLabel")}
                   </Label>
                   <div className="relative">
-                    <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                    <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                     <Input
                       id="password"
                       type={showPassword ? "text" : "password"}
                       placeholder={authFormTranslations(
                         "signin.passwordPlaceholder"
                       )}
-                      className="pl-10 pr-10 bg-white border-gray-300 text-gray-900 placeholder-gray-500"
+                      className="pl-10 pr-10 bg-input border-border text-foreground placeholder:text-muted-foreground focus-ring"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+                      className="absolute right-3 top-3 text-muted-foreground hover:text-foreground transition-colors"
                     >
                       {showPassword ? (
                         <EyeOff className="h-4 w-4" />
@@ -155,18 +155,21 @@ export function AuthForms() {
                     <input
                       id="remember"
                       type="checkbox"
-                      className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                      className="rounded border-border text-primary-accent focus:ring-primary-accent"
                     />
-                    <Label htmlFor="remember" className="text-sm text-gray-600">
+                    <Label
+                      htmlFor="remember"
+                      className="text-sm text-muted-foreground"
+                    >
                       {authFormTranslations("signin.rememberMe")}
                     </Label>
                   </div>
-                  <button className="text-sm text-blue-600 hover:text-blue-500">
+                  <button className="text-sm text-primary-accent hover:text-primary transition-colors">
                     {authFormTranslations("signin.forgotPassword")}
                   </button>
                 </div>
 
-                <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">
+                <Button className="w-full bg-primary hover:bg-primary-accent text-primary-foreground">
                   {authFormTranslations("signin.signInButtonText")}
                 </Button>
               </div>
@@ -186,12 +189,12 @@ export function AuthForms() {
             : "opacity-100 transform translate-y-0"
         }`}
       >
-        <Card className="w-full max-w-md mx-auto bg-white/95 backdrop-blur-sm shadow-2xl border-white/20">
+        <Card className="w-full max-w-md mx-auto glass-effect shadow-2xl">
           <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl font-bold text-center text-gray-900">
+            <CardTitle className="text-2xl font-bold text-center text-heading">
               {authFormTranslations("signupTitle")}
             </CardTitle>
-            <CardDescription className="text-center text-gray-600">
+            <CardDescription className="text-center text-sub">
               {authFormTranslations("signupDescription")}
             </CardDescription>
           </CardHeader>
@@ -203,7 +206,7 @@ export function AuthForms() {
                 <Separator className="w-full" />
               </div>
               <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-white px-2 text-gray-500">
+                <span className="bg-card px-2 text-muted-foreground">
                   {authFormTranslations("signupEmailContinueMessage")}
                 </span>
               </div>
@@ -211,57 +214,57 @@ export function AuthForms() {
 
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="name" className="text-gray-700">
+                <Label htmlFor="name" className="text-foreground">
                   {authFormTranslations("signup.fullNameLabel")}
                 </Label>
                 <div className="relative">
-                  <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                   <Input
                     id="name"
                     type="text"
                     placeholder={authFormTranslations(
                       "signup.fullNamePlaceholder"
                     )}
-                    className="pl-10 bg-white border-gray-300 text-gray-900 placeholder-gray-500"
+                    className="pl-10 bg-input border-border text-foreground placeholder:text-muted-foreground focus-ring"
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="signup-email" className="text-gray-700">
+                <Label htmlFor="signup-email" className="text-foreground">
                   {authFormTranslations("signup.emailLabel")}
                 </Label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                   <Input
                     id="signup-email"
                     type="email"
                     placeholder={authFormTranslations(
                       "signup.emailPlaceholder"
                     )}
-                    className="pl-10 bg-white border-gray-300 text-gray-900 placeholder-gray-500"
+                    className="pl-10 bg-input border-border text-foreground placeholder:text-muted-foreground focus-ring"
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="signup-password" className="text-gray-700">
+                <Label htmlFor="signup-password" className="text-foreground">
                   {authFormTranslations("signup.passwordLabel")}
                 </Label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                   <Input
                     id="signup-password"
                     type={showPassword ? "text" : "password"}
                     placeholder={authFormTranslations(
                       "signup.passwordPlaceholder"
                     )}
-                    className="pl-10 pr-10 bg-white border-gray-300 text-gray-900 placeholder-gray-500"
+                    className="pl-10 pr-10 bg-input border-border text-foreground placeholder:text-muted-foreground focus-ring"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+                    className="absolute right-3 top-3 text-muted-foreground hover:text-foreground transition-colors"
                   >
                     {showPassword ? (
                       <EyeOff className="h-4 w-4" />
@@ -273,23 +276,23 @@ export function AuthForms() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="confirm-password" className="text-gray-700">
+                <Label htmlFor="confirm-password" className="text-foreground">
                   {authFormTranslations("signup.confirmPasswordLabel")}
                 </Label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                   <Input
                     id="confirm-password"
                     type={showConfirmPassword ? "text" : "password"}
                     placeholder={authFormTranslations(
                       "signup.confirmPasswordPlaceholder"
                     )}
-                    className="pl-10 pr-10 bg-white border-gray-300 text-gray-900 placeholder-gray-500"
+                    className="pl-10 pr-10 bg-input border-border text-foreground placeholder:text-muted-foreground focus-ring"
                   />
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+                    className="absolute right-3 top-3 text-muted-foreground hover:text-foreground transition-colors"
                   >
                     {showConfirmPassword ? (
                       <EyeOff className="h-4 w-4" />
@@ -304,21 +307,30 @@ export function AuthForms() {
                 <input
                   id="terms"
                   type="checkbox"
-                  className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  className="rounded border-border text-primary-accent focus:ring-primary-accent"
                 />
-                <Label htmlFor="terms" className="text-sm text-gray-600">
+                <Label
+                  htmlFor="terms"
+                  className="text-sm text-muted-foreground"
+                >
                   {authFormTranslations("signup.iAgreeToThe")}{" "}
-                  <Link href="" className="text-blue-600 hover:text-blue-500">
+                  <Link
+                    href=""
+                    className="text-primary-accent hover:text-primary transition-colors"
+                  >
                     {authFormTranslations("signup.termsOfService")}
                   </Link>{" "}
                   {authFormTranslations("signup.and")}{" "}
-                  <Link href="" className="text-blue-600 hover:text-blue-500">
+                  <Link
+                    href=""
+                    className="text-primary-accent hover:text-primary transition-colors"
+                  >
                     {authFormTranslations("signup.privacyPolicy")}
                   </Link>
                 </Label>
               </div>
 
-              <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">
+              <Button className="w-full bg-primary hover:bg-primary-accent text-primary-foreground">
                 {authFormTranslations("signup.signUpButtonText")}
               </Button>
             </div>
