@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,6 +16,8 @@ import { Eye, EyeOff, Mail, Lock, User } from "lucide-react";
 import useAuthFormTransitioningStore from "@/lib/store/useAuthFormTransitioningStore";
 import { useTranslations } from "next-intl";
 import { Link } from "@/lib/i18n/navigation";
+import { useGetRedirectUrl } from "@/hooks/useSocialAuth";
+import { ThirdPartyAuthProviders } from "@/lib/types/ThirdPartyAuthProviders";
 
 export function AuthForms() {
   const authFormTranslations = useTranslations("landingPage.auth");
@@ -24,11 +26,45 @@ export function AuthForms() {
   const { isTransitioning, activeForm } = useAuthFormTransitioningStore(
     (state) => state
   );
+  const {
+    mutate: getRedirectUrl,
+    isPending,
+    isError,
+    data,
+  } = useGetRedirectUrl();
 
-  const handleSocialLogin = (provider: "google" | "facebook") => {
-    // Placeholder for social login functionality
-    console.log(`Login with ${provider}`);
+  const handleSocialLogin = (provider: ThirdPartyAuthProviders) => {
+    getRedirectUrl(provider);
   };
+
+  useEffect(() => {
+    if (isPending || isError || !data?.url) {
+      return;
+    }
+    window.open(
+      data.url,
+      "PopupWindow",
+      "width=500,height=600,menubar=no,toolbar=no,location=no,status=no"
+    );
+    const handleMessage = (
+      event: MessageEvent<{ error?: string; type: string }>
+    ) => {
+      if (event.origin !== window.location.origin) return;
+      if (!event.data.type || event.data.type !== "provider_oauth") {
+        return;
+      }
+
+      if (!event.data.error) {
+        window.location.reload();
+      } else {
+        console.log(event.data.error);
+      }
+    };
+    window.addEventListener("message", handleMessage);
+    return () => {
+      window.removeEventListener("message", handleMessage);
+    };
+  }, [isPending, data, isError]);
 
   const SocialLoginButtons = () => (
     <div className="space-y-3">

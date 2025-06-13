@@ -1,13 +1,11 @@
 "use client";
 
-import { MessageCircle } from "lucide-react";
 import { HeaderAuthButton } from "./auth/HeaderAuthButton";
 import useAuthFormTransitioningStore from "@/lib/store/useAuthFormTransitioningStore";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
 
 export function Header() {
-  const commonTranslations = useTranslations("common");
   const headerTranslations = useTranslations("landingPage.header");
   const { activeForm, setActiveForm } = useAuthFormTransitioningStore(
     (state) => state
@@ -33,11 +31,9 @@ export function Header() {
                 alt="Logo"
                 width={64}
                 height={64}
+                className="h16 w-16"
               />
             </div>
-            <span className="text-xl font-bold text-white">
-              {commonTranslations("appName")}
-            </span>
           </div>
 
           {/* Auth Buttons */}

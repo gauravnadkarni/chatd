@@ -17,7 +17,7 @@ const initialState: AuthFormTransitioningState = {
 
 const useAuthFormTransitioningStore = create<
   AuthFormTransitioningState & AuthFormTransitioningActions
->((set, get) => ({
+>((set) => ({
   ...initialState,
   setActiveForm: (form: "signin" | "signup") => set({ activeForm: form }),
   setIsTransitioning: (transitioning: boolean) =>

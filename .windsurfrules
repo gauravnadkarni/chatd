@@ -64,6 +64,7 @@ These rules guide the Windsurf AI for all code generation and modifications with
   - Organize feature-specific code within the `/src/app` directory using Next.js route groups
   - Group related components in `/src/components` by feature (e.g., `auth`, `chat`, `ui`)
   - Keep shared utilities and configurations in `/src/lib`
+  - Keep nextjs server actions in `/src/lib/actions`
   - Place database models and migrations in `/prisma`
 
 - **Component Structure**:

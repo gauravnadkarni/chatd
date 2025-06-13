@@ -3,9 +3,9 @@ import { ReadonlyRequestCookies } from "next/dist/server/web/spec-extension/adap
 
 export async function createClientForServer(
   cookieStore: ReadonlyRequestCookies,
-  key: string = process.env.SUPABASE_ANON_KEY!
+  key: string = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 ) {
-  return createServerClient(process.env.SUPABASE_URL!, key, {
+  return createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, key, {
     cookies: {
       getAll() {
         return cookieStore.getAll();

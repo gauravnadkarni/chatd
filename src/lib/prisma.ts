@@ -4,7 +4,7 @@ const prisma = new PrismaClient({
   log: ["query", "info", "warn", "error"],
   datasources: {
     db: {
-      url: process.env.DATABASE_URL,
+      url: process.env.POOLING_DATABASE_URL,
     },
   },
   errorFormat: "pretty",

@@ -1,7 +1,7 @@
 import { AbstractError } from "./abstract-error";
 
-export class AuthError extends AbstractError {
+export class ServiceError extends AbstractError {
   constructor(message: string, payload?: unknown) {
-    super(message, 401, payload);
+    super(message, 500, payload);
   }
 }

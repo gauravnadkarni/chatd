@@ -7,14 +7,14 @@ generator client {
 
 datasource db {
   provider  = "postgresql"
-  url       = env("TRANSACTION_POOLER_DATABASE_URL")
+  url       = env("POOLING_DATABASE_URL")
   directUrl = env("DIRECT_DATABASE_URL")
 }
 
 model Profile {
   id         String    @id @map("id") @db.Uuid // Matches auth.users.id (via DB constraint/convention)
   updated_at DateTime? @updatedAt @map("updated_at") @db.Timestamptz(6)
-  username   String?   @unique
+  email   String?   @unique
   full_name  String?   @map("full_name")
   avatar_url String?   @map("avatar_url")
   website    String?
