@@ -1,9 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Card,
   CardContent,
@@ -12,12 +9,13 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Eye, EyeOff, Mail, Lock, User } from "lucide-react";
-import useAuthFormTransitioningStore from "@/lib/store/useAuthFormTransitioningStore";
-import { useTranslations } from "next-intl";
-import { Link } from "@/lib/i18n/navigation";
 import { useGetRedirectUrl } from "@/hooks/useSocialAuth";
+import useAuthFormTransitioningStore from "@/lib/store/useAuthFormTransitioningStore";
 import { ThirdPartyAuthProviders } from "@/lib/types/ThirdPartyAuthProviders";
+import { useTranslations } from "next-intl";
+import { useEffect, useState } from "react";
+import { SigninForm } from "./SigninForm";
+import { SignupForm } from "./SignupForm";
 
 export function AuthForms() {
   const authFormTranslations = useTranslations("landingPage.auth");
@@ -107,16 +105,16 @@ export function AuthForms() {
     </div>
   );
 
-  if (activeForm === "signin") {
-    return (
-      <div className="order-1 lg:order-2 flex items-center justify-center">
-        <div
-          className={`w-full transition-all duration-300 ${
-            isTransitioning
-              ? "opacity-0 transform translate-y-2"
-              : "opacity-100 transform translate-y-0"
-          }`}
-        >
+  return (
+    <div className="order-1 lg:order-2 flex items-center justify-center">
+      <div
+        className={`w-full transition-all duration-300 ${
+          isTransitioning
+            ? "opacity-0 transform translate-y-2"
+            : "opacity-100 transform translate-y-0"
+        }`}
+      >
+        {activeForm === "signin" && (
           <Card className="w-full max-w-md mx-auto glass-effect shadow-2xl">
             <CardHeader className="space-y-1">
               <CardTitle className="text-2xl font-bold text-center text-heading">
@@ -140,238 +138,46 @@ export function AuthForms() {
                 </div>
               </div>
 
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="email" className="text-foreground">
-                    {authFormTranslations("signin.emailLabel")}
-                  </Label>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      id="email"
-                      type="email"
-                      placeholder={authFormTranslations(
-                        "signin.emailPlaceholder"
-                      )}
-                      className="pl-10 bg-input border-border text-foreground placeholder:text-muted-foreground focus-ring"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="password" className="text-foreground">
-                    {authFormTranslations("signin.passwordLabel")}
-                  </Label>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      id="password"
-                      type={showPassword ? "text" : "password"}
-                      placeholder={authFormTranslations(
-                        "signin.passwordPlaceholder"
-                      )}
-                      className="pl-10 pr-10 bg-input border-border text-foreground placeholder:text-muted-foreground focus-ring"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-3 text-muted-foreground hover:text-foreground transition-colors"
-                    >
-                      {showPassword ? (
-                        <EyeOff className="h-4 w-4" />
-                      ) : (
-                        <Eye className="h-4 w-4" />
-                      )}
-                    </button>
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
-                    <input
-                      id="remember"
-                      type="checkbox"
-                      className="rounded border-border text-primary-accent focus:ring-primary-accent"
-                    />
-                    <Label
-                      htmlFor="remember"
-                      className="text-sm text-muted-foreground"
-                    >
-                      {authFormTranslations("signin.rememberMe")}
-                    </Label>
-                  </div>
-                  <button className="text-sm text-primary-accent hover:text-primary transition-colors">
-                    {authFormTranslations("signin.forgotPassword")}
-                  </button>
-                </div>
-
-                <Button className="w-full bg-primary hover:bg-primary-accent text-primary-foreground">
-                  {authFormTranslations("signin.signInButtonText")}
-                </Button>
-              </div>
+              <SigninForm
+                showPassword={showPassword}
+                setShowPassword={setShowPassword}
+              />
             </CardContent>
           </Card>
-        </div>
-      </div>
-    );
-  }
+        )}
+        {activeForm === "signup" && (
+          <Card className="w-full max-w-md mx-auto glass-effect shadow-2xl">
+            <CardHeader className="space-y-1">
+              <CardTitle className="text-2xl font-bold text-center text-heading">
+                {authFormTranslations("signupTitle")}
+              </CardTitle>
+              <CardDescription className="text-center text-sub">
+                {authFormTranslations("signupDescription")}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <SocialLoginButtons />
 
-  return (
-    <div className="order-1 lg:order-2 flex items-center justify-center">
-      <div
-        className={`w-full transition-all duration-300 ${
-          isTransitioning
-            ? "opacity-0 transform translate-y-2"
-            : "opacity-100 transform translate-y-0"
-        }`}
-      >
-        <Card className="w-full max-w-md mx-auto glass-effect shadow-2xl">
-          <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl font-bold text-center text-heading">
-              {authFormTranslations("signupTitle")}
-            </CardTitle>
-            <CardDescription className="text-center text-sub">
-              {authFormTranslations("signupDescription")}
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <SocialLoginButtons />
-
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <Separator className="w-full" />
-              </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-card px-2 text-muted-foreground">
-                  {authFormTranslations("signupEmailContinueMessage")}
-                </span>
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="name" className="text-foreground">
-                  {authFormTranslations("signup.fullNameLabel")}
-                </Label>
-                <div className="relative">
-                  <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    id="name"
-                    type="text"
-                    placeholder={authFormTranslations(
-                      "signup.fullNamePlaceholder"
-                    )}
-                    className="pl-10 bg-input border-border text-foreground placeholder:text-muted-foreground focus-ring"
-                  />
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <Separator className="w-full" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-card px-2 text-muted-foreground">
+                    {authFormTranslations("signupEmailContinueMessage")}
+                  </span>
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="signup-email" className="text-foreground">
-                  {authFormTranslations("signup.emailLabel")}
-                </Label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    id="signup-email"
-                    type="email"
-                    placeholder={authFormTranslations(
-                      "signup.emailPlaceholder"
-                    )}
-                    className="pl-10 bg-input border-border text-foreground placeholder:text-muted-foreground focus-ring"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="signup-password" className="text-foreground">
-                  {authFormTranslations("signup.passwordLabel")}
-                </Label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    id="signup-password"
-                    type={showPassword ? "text" : "password"}
-                    placeholder={authFormTranslations(
-                      "signup.passwordPlaceholder"
-                    )}
-                    className="pl-10 pr-10 bg-input border-border text-foreground placeholder:text-muted-foreground focus-ring"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-3 text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    {showPassword ? (
-                      <EyeOff className="h-4 w-4" />
-                    ) : (
-                      <Eye className="h-4 w-4" />
-                    )}
-                  </button>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="confirm-password" className="text-foreground">
-                  {authFormTranslations("signup.confirmPasswordLabel")}
-                </Label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    id="confirm-password"
-                    type={showConfirmPassword ? "text" : "password"}
-                    placeholder={authFormTranslations(
-                      "signup.confirmPasswordPlaceholder"
-                    )}
-                    className="pl-10 pr-10 bg-input border-border text-foreground placeholder:text-muted-foreground focus-ring"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-3 top-3 text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    {showConfirmPassword ? (
-                      <EyeOff className="h-4 w-4" />
-                    ) : (
-                      <Eye className="h-4 w-4" />
-                    )}
-                  </button>
-                </div>
-              </div>
-
-              <div className="flex items-center space-x-2">
-                <input
-                  id="terms"
-                  type="checkbox"
-                  className="rounded border-border text-primary-accent focus:ring-primary-accent"
-                />
-                <Label
-                  htmlFor="terms"
-                  className="text-sm text-muted-foreground"
-                >
-                  {authFormTranslations("signup.iAgreeToThe")}{" "}
-                  <Link
-                    href=""
-                    className="text-primary-accent hover:text-primary transition-colors"
-                  >
-                    {authFormTranslations("signup.termsOfService")}
-                  </Link>{" "}
-                  {authFormTranslations("signup.and")}{" "}
-                  <Link
-                    href=""
-                    className="text-primary-accent hover:text-primary transition-colors"
-                  >
-                    {authFormTranslations("signup.privacyPolicy")}
-                  </Link>
-                </Label>
-              </div>
-
-              <Button className="w-full bg-primary hover:bg-primary-accent text-primary-foreground">
-                {authFormTranslations("signup.signUpButtonText")}
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+              <SignupForm
+                showPassword={showPassword}
+                setShowPassword={setShowPassword}
+                showConfirmPassword={showConfirmPassword}
+                setShowConfirmPassword={setShowConfirmPassword}
+              />
+            </CardContent>
+          </Card>
+        )}
       </div>
     </div>
   );

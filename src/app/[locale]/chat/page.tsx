@@ -7,7 +7,7 @@ export default async function Home({ params }: { params: { locale: string } }) {
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <ProtectedLayout locale={locale}>
-        <Conversations locale={locale} />
+        <Conversations />
       </ProtectedLayout>
     </div>
   );
