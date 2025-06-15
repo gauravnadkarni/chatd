@@ -26,3 +26,11 @@ export const getById = async (id: string): Promise<ProfileModel | null> => {
     where: { id },
   });
 };
+
+export const getUserByEmail = async (
+  email: string
+): Promise<ProfileModel | null> => {
+  return prisma.profile.findUnique({
+    where: { email },
+  });
+};

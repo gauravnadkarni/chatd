@@ -59,7 +59,8 @@ serve(async (req) => {
       // Extract the 'full_name' from 'raw_user_meta_data'.
       // The 'raw_user_meta_data' is a JSONB column, so we use optional chaining
       // and provide a default of null if 'full_name' is not present in the metadata.
-      const fullName = raw_user_meta_data?.full_name || null;
+      const fullName =
+        raw_user_meta_data?.full_name || raw_user_meta_data?.name || null;
 
       // Perform the insertion into the 'public.profiles' table.
       // 'id' and 'email' are copied directly from the new user.

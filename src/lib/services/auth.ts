@@ -1,4 +1,6 @@
 import { AuthError } from "../errors/auth-error";
+import { ValidationError } from "../errors/validation-error";
+import { getUserByEmail } from "../repositories/profiles";
 import { createClientForServer } from "../supabase";
 import { ThirdPartyAuthProviders } from "../types/ThirdPartyAuthProviders";
 import { ReadonlyRequestCookies } from "next/dist/server/web/spec-extension/adapters/request-cookies";
@@ -46,5 +48,30 @@ export class Auth {
       throw new AuthError(error.message, error);
     }
     return userFromSession!;
+  };
+
+  signupWithPassword = async (
+    email: string,
+    password: string,
+    fullName: string
+  ) => {
+    const existingUser = await getUserByEmail(email);
+    if (existingUser) {
+      throw new ValidationError("User already exists");
+    }
+    const supabase = await createClientForServer(this.cookieStore);
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          fullName,
+        },
+      },
+    });
+    if (error) {
+      throw new AuthError(error.message);
+    }
+    return data;
   };
 }

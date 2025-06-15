@@ -9,6 +9,7 @@ import { QueryProvider } from "@/providers/QueryProvider";
 import { ThemeProvider } from "@/providers/ThemeProvider";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/sonner";
+import { ToastProvider } from "@/providers/ToastProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -48,8 +49,10 @@ export default async function RootLayout({
         <NextIntlClientProvider messages={messages} locale={locale}>
           <QueryProvider>
             <TooltipProvider>
-              <Toaster />
-              <ThemeProvider defaultTheme="system">{children}</ThemeProvider>
+              <ThemeProvider defaultTheme="system">
+                {children}
+                <ToastProvider />
+              </ThemeProvider>
             </TooltipProvider>
           </QueryProvider>
         </NextIntlClientProvider>

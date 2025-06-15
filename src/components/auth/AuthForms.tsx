@@ -16,14 +16,20 @@ import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { SigninForm } from "./SigninForm";
 import { SignupForm } from "./SignupForm";
+import { useSearchParams } from "next/navigation";
+import Spinner from "../Spinner";
+import { usePathname, useRouter } from "@/lib/i18n/navigation";
 
 export function AuthForms() {
   const authFormTranslations = useTranslations("landingPage.auth");
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const { isTransitioning, activeForm } = useAuthFormTransitioningStore(
-    (state) => state
-  );
+  const currentForm = searchParams.get("form") || "signin";
+  const { isTransitioning, activeForm, setActiveForm } =
+    useAuthFormTransitioningStore((state) => state);
   const {
     mutate: getRedirectUrl,
     isPending,
@@ -34,6 +40,18 @@ export function AuthForms() {
   const handleSocialLogin = (provider: ThirdPartyAuthProviders) => {
     getRedirectUrl(provider);
   };
+
+  const updateUrlParams = (formType: "signin" | "signup") => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("form", formType);
+    return params.toString();
+  };
+
+  useEffect(() => {
+    if (currentForm === "signin" || currentForm === "signup") {
+      setActiveForm(currentForm);
+    }
+  }, [currentForm, setActiveForm, router]);
 
   useEffect(() => {
     if (isPending || isError || !data?.url) {
@@ -105,6 +123,21 @@ export function AuthForms() {
     </div>
   );
 
+  const formTitle =
+    activeForm === "signup"
+      ? authFormTranslations("signupTitle")
+      : authFormTranslations("signinTitle");
+
+  const formDescription =
+    activeForm === "signup"
+      ? authFormTranslations("signupDescription")
+      : authFormTranslations("signinDescription");
+
+  const formContinueMessage =
+    activeForm === "signup"
+      ? authFormTranslations("signupEmailContinueMessage")
+      : authFormTranslations("signinEmailContinueMessage");
+
   return (
     <div className="order-1 lg:order-2 flex items-center justify-center">
       <div
@@ -114,45 +147,23 @@ export function AuthForms() {
             : "opacity-100 transform translate-y-0"
         }`}
       >
-        {activeForm === "signin" && (
+        {activeForm === "loading" && (
           <Card className="w-full max-w-md mx-auto glass-effect shadow-2xl">
-            <CardHeader className="space-y-1">
-              <CardTitle className="text-2xl font-bold text-center text-heading">
-                {authFormTranslations("signinTitle")}
-              </CardTitle>
-              <CardDescription className="text-center text-sub">
-                {authFormTranslations("signinDescription")}
-              </CardDescription>
-            </CardHeader>
             <CardContent className="space-y-4">
-              <SocialLoginButtons />
-
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <Separator className="w-full" />
-                </div>
-                <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-card px-2 text-muted-foreground">
-                    {authFormTranslations("signinEmailContinueMessage")}
-                  </span>
-                </div>
+              <div className="min-h-96 flex items-center justify-center">
+                <Spinner centerAligned classValues={["h-12 w-12"]} />
               </div>
-
-              <SigninForm
-                showPassword={showPassword}
-                setShowPassword={setShowPassword}
-              />
             </CardContent>
           </Card>
         )}
-        {activeForm === "signup" && (
+        {(activeForm === "signin" || activeForm === "signup") && (
           <Card className="w-full max-w-md mx-auto glass-effect shadow-2xl">
             <CardHeader className="space-y-1">
               <CardTitle className="text-2xl font-bold text-center text-heading">
-                {authFormTranslations("signupTitle")}
+                {formTitle}
               </CardTitle>
               <CardDescription className="text-center text-sub">
-                {authFormTranslations("signupDescription")}
+                {formDescription}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -164,17 +175,30 @@ export function AuthForms() {
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
                   <span className="bg-card px-2 text-muted-foreground">
-                    {authFormTranslations("signupEmailContinueMessage")}
+                    {formContinueMessage}
                   </span>
                 </div>
               </div>
 
-              <SignupForm
-                showPassword={showPassword}
-                setShowPassword={setShowPassword}
-                showConfirmPassword={showConfirmPassword}
-                setShowConfirmPassword={setShowConfirmPassword}
-              />
+              {activeForm === "signin" && (
+                <SigninForm
+                  showPassword={showPassword}
+                  setShowPassword={setShowPassword}
+                />
+              )}
+              {activeForm === "signup" && (
+                <SignupForm
+                  showPassword={showPassword}
+                  setShowPassword={setShowPassword}
+                  showConfirmPassword={showConfirmPassword}
+                  setShowConfirmPassword={setShowConfirmPassword}
+                  onSuccess={() => {
+                    router.push(`${pathname}?${updateUrlParams("signin")}`, {
+                      scroll: false,
+                    });
+                  }}
+                />
+              )}
             </CardContent>
           </Card>
         )}

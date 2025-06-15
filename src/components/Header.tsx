@@ -1,22 +1,36 @@
 "use client";
 
+import { usePathname, useRouter } from "@/lib/i18n/navigation";
 import { HeaderAuthButton } from "./auth/HeaderAuthButton";
 import useAuthFormTransitioningStore from "@/lib/store/useAuthFormTransitioningStore";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
+import { useSearchParams } from "next/navigation";
 
 export function Header() {
   const headerTranslations = useTranslations("landingPage.header");
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
   const { activeForm, setActiveForm } = useAuthFormTransitioningStore(
     (state) => state
   );
 
+  const updateUrlParams = (formType: "signin" | "signup") => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("form", formType);
+    return params.toString();
+  };
+
   const onSignInClick = () => {
     setActiveForm("signin");
+    router.push(`${pathname}?${updateUrlParams("signin")}`, { scroll: false });
   };
 
   const onSignUpClick = () => {
     setActiveForm("signup");
+    router.push(`${pathname}?${updateUrlParams("signup")}`, { scroll: false });
   };
 
   return (

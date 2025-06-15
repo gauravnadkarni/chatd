@@ -18,19 +18,27 @@ import { useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
 import { Checkbox } from "../ui/checkbox";
 import Spinner from "../Spinner";
+import { useSignupWithPassword } from "@/hooks/usePasswordAuth";
+import { useToast } from "@/hooks/useToast";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 export function SignupForm({
   showPassword,
   setShowPassword,
   showConfirmPassword,
   setShowConfirmPassword,
+  onSuccess,
 }: {
   showPassword: boolean;
   setShowPassword: (showPassword: boolean) => void;
   showConfirmPassword: boolean;
   setShowConfirmPassword: (showConfirmPassword: boolean) => void;
+  onSuccess: () => void;
 }) {
   const authFormTranslations = useTranslations("landingPage.auth");
+  const toast = useToast();
+  const isMobile = useIsMobile();
+  const { mutate: signupWithPassword, isPending } = useSignupWithPassword();
 
   const form = useForm<SignupFormData>({
     resolver: zodResolver(signupSchema),
@@ -45,8 +53,26 @@ export function SignupForm({
   const termsChecked = form.watch("terms");
 
   const onSubmit = async (data: SignupFormData) => {
-    console.log(data);
-    // We'll implement the actual submission later
+    signupWithPassword(data, {
+      onError: (error) => {
+        console.log(error);
+        const toastId = toast.error("Something went wrong!", {
+          description: "Please try again later or contact support.",
+          position: isMobile ? "top-center" : "bottom-right",
+          action: {
+            label: "Close",
+            onClick: () => toast.dismiss(toastId),
+          },
+        });
+      },
+      onSuccess: () => {
+        toast.success("Signup successful!", {
+          description: "Please login to continue.",
+          duration: 3000,
+        });
+        onSuccess();
+      },
+    });
   };
 
   return (
@@ -229,9 +255,9 @@ export function SignupForm({
           <Button
             type="submit"
             className="w-full bg-primary hover:bg-primary-accent text-primary-foreground"
-            disabled={!termsChecked || form.formState.isSubmitting}
+            disabled={!termsChecked || form.formState.isSubmitting || isPending}
           >
-            {form.formState.isSubmitting ? (
+            {form.formState.isSubmitting || isPending ? (
               <>
                 <Spinner centerAligned classValues={["h-4 w-4"]} />
                 {authFormTranslations("signup.signUpButtonText")}
