@@ -34,5 +34,14 @@ export const signupSchema = z
     path: ["confirmPassword"], // This will attach the error to confirmPassword field
   });
 
+export const signinSchema = z.object({
+  email: z
+    .string()
+    .email("Please enter a valid email address")
+    .min(1, "Email is required"),
+  password: passwordValidation,
+});
+
 // Export the type to be used in the form
 export type SignupFormData = z.infer<typeof signupSchema>;
+export type SigninFormData = z.infer<typeof signinSchema>;

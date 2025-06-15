@@ -74,4 +74,17 @@ export class Auth {
     }
     return data;
   };
+
+  signinWithPassword = async (email: string, password: string) => {
+    const supabase = await createClientForServer(this.cookieStore);
+    const { error, data } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+    if (error) {
+      console.log(error);
+      throw new AuthError("User doesn't exist");
+    }
+    return data;
+  };
 }

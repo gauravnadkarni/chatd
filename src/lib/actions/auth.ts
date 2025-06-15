@@ -4,8 +4,15 @@ import { cookies } from "next/headers";
 import { serverActionWrapper } from "../server-action-wrapper";
 import { Auth } from "../services/auth";
 import { ThirdPartyAuthProviders } from "../types/ThirdPartyAuthProviders";
-import { SignupFormData, signupSchema } from "../schemas/auth-schema";
+import {
+  SigninFormData,
+  signinSchema,
+  SignupFormData,
+  signupSchema,
+} from "../schemas/auth-schema";
 import { ValidationError } from "../errors/validation-error";
+import { redirect } from "../i18n/navigation";
+import { getLocale } from "next-intl/server";
 
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL!;
 
@@ -38,7 +45,6 @@ export const signup = async (signupData: SignupFormData) => {
     const name = signupData.name;
     const terms = signupData.terms;
     const confirmPassword = signupData.confirmPassword;
-    console.log("reached here");
     const validationResult = signupSchema.safeParse({
       email,
       password,
@@ -46,7 +52,6 @@ export const signup = async (signupData: SignupFormData) => {
       terms,
       confirmPassword,
     });
-    console.log("validationResult", validationResult.error, signupData);
     if (!validationResult.success) {
       throw new ValidationError(
         "Validation Error",
@@ -54,10 +59,31 @@ export const signup = async (signupData: SignupFormData) => {
         validationResult.error.flatten()
       );
     }
-    console.log("reached here 1");
     const auth = new Auth(await cookies());
     const data = await auth.signupWithPassword(email, password, name);
-    console.log("reached here 2", data);
+    return data;
+  };
+
+  return serverActionWrapper(serverAction);
+};
+
+export const signin = async (signinData: SigninFormData) => {
+  const serverAction = async () => {
+    const email = signinData.email;
+    const password = signinData.password;
+    const validationResult = signinSchema.safeParse({
+      email,
+      password,
+    });
+    if (!validationResult.success) {
+      throw new ValidationError(
+        "Validation Error",
+        400,
+        validationResult.error.flatten()
+      );
+    }
+    const auth = new Auth(await cookies());
+    const data = await auth.signinWithPassword(email, password);
     return data;
   };
 

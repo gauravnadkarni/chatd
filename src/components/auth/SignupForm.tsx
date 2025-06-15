@@ -54,8 +54,7 @@ export function SignupForm({
 
   const onSubmit = async (data: SignupFormData) => {
     signupWithPassword(data, {
-      onError: (error) => {
-        console.log(error);
+      onError: () => {
         const toastId = toast.error("Something went wrong!", {
           description: "Please try again later or contact support.",
           position: isMobile ? "top-center" : "bottom-right",

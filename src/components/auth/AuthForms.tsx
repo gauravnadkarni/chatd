@@ -184,6 +184,9 @@ export function AuthForms() {
                 <SigninForm
                   showPassword={showPassword}
                   setShowPassword={setShowPassword}
+                  onSuccess={() => {
+                    router.refresh();
+                  }}
                 />
               )}
               {activeForm === "signup" && (
