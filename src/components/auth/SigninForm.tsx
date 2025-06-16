@@ -2,12 +2,15 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { useIsMobile } from "@/hooks/useIsMobile";
+import { useSigninWithPassword } from "@/hooks/usePasswordAuth";
+import { useToast } from "@/hooks/useToast";
 import { SigninFormData, signinSchema } from "@/lib/schemas/auth-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff, Lock, Mail } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
+import Spinner from "../Spinner";
 import {
   Form,
   FormControl,
@@ -16,10 +19,6 @@ import {
   FormLabel,
   FormMessage,
 } from "../ui/form";
-import { useSigninWithPassword } from "@/hooks/usePasswordAuth";
-import { useToast } from "@/hooks/useToast";
-import { useIsMobile } from "@/hooks/useIsMobile";
-import Spinner from "../Spinner";
 
 export function SigninForm({
   showPassword,
@@ -48,7 +47,7 @@ export function SigninForm({
 
   const onSubmit = async (data: SigninFormData) => {
     signinWithPassword(data, {
-      onError: (error) => {
+      onError: () => {
         toast.error("Invalid credentials!", {
           description: "Please try again.",
           position: isMobile ? "top-center" : "bottom-right",
@@ -129,25 +128,6 @@ export function SigninForm({
                 </FormItem>
               )}
             />
-          </div>
-
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <input
-                id="remember"
-                type="checkbox"
-                className="rounded border-border text-primary-accent focus:ring-primary-accent"
-              />
-              <Label
-                htmlFor="remember"
-                className="text-sm text-muted-foreground"
-              >
-                {authFormTranslations("signin.rememberMe")}
-              </Label>
-            </div>
-            <button className="text-sm text-primary-accent hover:text-primary transition-colors">
-              {authFormTranslations("signin.forgotPassword")}
-            </button>
           </div>
 
           <Button

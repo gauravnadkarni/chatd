@@ -65,10 +65,10 @@ export function SignupForm({
         });
       },
       onSuccess: () => {
-        toast.success("Signup successful!", {
+        /*toast.success("Signup successful!", {
           description: "Please login to continue.",
           duration: 3000,
-        });
+        });*/
         onSuccess();
       },
     });

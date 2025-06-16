@@ -8,7 +8,6 @@ import getRequestConfig from "@/lib/i18n/request";
 import { QueryProvider } from "@/providers/QueryProvider";
 import { ThemeProvider } from "@/providers/ThemeProvider";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { Toaster } from "@/components/ui/sonner";
 import { ToastProvider } from "@/providers/ToastProvider";
 
 const geistSans = Geist({

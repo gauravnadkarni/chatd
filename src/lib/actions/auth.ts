@@ -1,18 +1,16 @@
 "use server";
 
 import { cookies } from "next/headers";
-import { serverActionWrapper } from "../server-action-wrapper";
-import { Auth } from "../services/auth";
-import { ThirdPartyAuthProviders } from "../types/ThirdPartyAuthProviders";
+import { ValidationError } from "../errors/validation-error";
 import {
   SigninFormData,
   signinSchema,
   SignupFormData,
   signupSchema,
 } from "../schemas/auth-schema";
-import { ValidationError } from "../errors/validation-error";
-import { redirect } from "../i18n/navigation";
-import { getLocale } from "next-intl/server";
+import { serverActionWrapper } from "../server-action-wrapper";
+import { Auth } from "../services/auth";
+import { ThirdPartyAuthProviders } from "../types/ThirdPartyAuthProviders";
 
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL!;
 
