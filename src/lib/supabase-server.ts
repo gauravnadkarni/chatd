@@ -1,10 +1,10 @@
 import { createServerClient } from "@supabase/ssr";
-import { ReadonlyRequestCookies } from "next/dist/server/web/spec-extension/adapters/request-cookies";
+import { cookies } from "next/headers";
 
 export async function createClientForServer(
-  cookieStore: ReadonlyRequestCookies,
   key: string = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 ) {
+  const cookieStore = await cookies();
   return createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, key, {
     cookies: {
       getAll() {
@@ -24,11 +24,3 @@ export async function createClientForServer(
     },
   });
 }
-
-import { createBrowserClient } from "@supabase/ssr";
-
-export const createClientForBrowser = () =>
-  createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );

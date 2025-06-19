@@ -11,37 +11,37 @@ These are the foundational tasks that must be completed before significant featu
 
 _Dependencies:_ 1.1.1
 
-- 1.2.1 Implement `public.profiles` table (including `is_admin` column)
-- 1.2.2 Implement `public.user_device_tokens` table
-- 1.2.3 Implement `public.contacts` table
-- 1.2.4 Implement `public.contact_requests` table
-- 1.2.5 Implement `public.groups` table
-- 1.2.6 Implement `public.group_members` table
-- 1.2.7 Implement `public.messages` table
-- 1.2.8 Implement `public.user_conversation_status` table
+- [x] 1.2.1 Implement `public.profiles` table (including `is_admin` column)
+- [x] 1.2.2 Implement `public.user_device_tokens` table
+- [x] 1.2.3 Implement `public.contacts` table
+- [x] 1.2.4 Implement `public.contact_requests` table
+- [x] 1.2.5 Implement `public.groups` table
+- [x] 1.2.6 Implement `public.group_members` table
+- [x] 1.2.7 Implement `public.messages` table
+- [x] 1.2.8 Implement `public.user_conversation_status` table
 
 ### 1.3 Initial Row Level Security (RLS) Policies
 
 _Dependencies:_ All of 1.2.x (relevant tables must exist)
 
-- 1.3.1 Configure RLS for `public.profiles`
-- 1.3.2 Configure RLS for `public.user_device_tokens`
-- 1.3.3 Configure RLS for `public.contacts`
-- 1.3.4 Configure RLS for `public.contact_requests`
-- 1.3.5 Configure RLS for `public.groups`
-- 1.3.6 Configure RLS for `public.group_members`
-- 1.3.7 Configure RLS for `public.messages`
-- 1.3.8 Configure RLS for `public.user_conversation_status`
+- [x] 1.3.1 Configure RLS for `public.profiles`
+- [x] 1.3.2 Configure RLS for `public.user_device_tokens`
+- [x] 1.3.3 Configure RLS for `public.contacts`
+- [x] 1.3.4 Configure RLS for `public.contact_requests`
+- [x] 1.3.5 Configure RLS for `public.groups`
+- [x] 1.3.6 Configure RLS for `public.group_members`
+- [x] 1.3.7 Configure RLS for `public.messages`
+- [x] 1.3.8 Configure RLS for `public.user_conversation_status`
 
 ### 1.4 Next.js Project Setup & Core Utilities
 
 _Dependencies:_ 1.1.1
 
-- 1.4.1 Initialize Next.js Project (App Router)
-- 1.4.2 Configure Tailwind CSS
-- 1.4.3 Integrate Shadcn/UI Component Library
-- 1.4.4 Install Core Development Dependencies (`@supabase/ssr`, `react-hook-form`, `zod`, etc.)
-- 1.4.5 Create Supabase Client Utilities (Server Component Client, Client Component Client)
+- [x] 1.4.1 Initialize Next.js Project (App Router)
+- [x] 1.4.2 Configure Tailwind CSS
+- [x] 1.4.3 Integrate Shadcn/UI Component Library
+- [x] 1.4.4 Install Core Development Dependencies (`@supabase/ssr`, `react-hook-form`, `zod`, etc.)
+- [x] 1.4.5 Create Supabase Client Utilities (Server Component Client, Client Component Client)
 
 ---
 
@@ -53,12 +53,12 @@ This phase focuses on enabling users to sign up, log in, and manage their basic 
 
 _Dependencies:_ All of 1.0 (Phase 1)
 
-- 2.1.1 Enable Auth Providers (Email/Password, Google, Facebook) in Supabase Dashboard.
-- 2.1.2 Implement Supabase Database Trigger (`handle_new_user`) for automatic `public.profiles` creation on new user signup.
-- 2.1.3 Develop Login and Signup UI (Client Components using `react-hook-form`, `zod`).
-- 2.1.4 Implement Authentication Server Actions (`signInWithPassword`, `signUp`).
-- 2.1.5 Implement OAuth Callback Route (`/auth/callback/route.ts`) for social logins.
-- 2.1.6 Implement Protected Routes and Client-side Authentication Context for global auth state.
+- [x] 2.1.1 Enable Auth Providers (Email/Password, Google, Facebook) in Supabase Dashboard.
+- [x] 2.1.2 Implement Supabase Database Trigger (`handle_new_user`) for automatic `public.profiles` creation on new user signup.
+- [x] 2.1.3 Develop Login and Signup UI (Client Components using `react-hook-form`, `zod`).
+- [x] 2.1.4 Implement Authentication Server Actions (`signInWithPassword`, `signUp`).
+- [x] 2.1.5 Implement OAuth Callback Route (`/auth/callback/route.ts`) for social logins.
+- [x] 2.1.6 Implement Protected Routes and Client-side Authentication Context for global auth state.
 
 ### 2.2 User Profile Management
 

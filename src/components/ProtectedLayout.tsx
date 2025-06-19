@@ -1,17 +1,18 @@
-import { createClientForServer } from "@/lib/supabase";
-import { cookies } from "next/headers";
+import { createClientForServer } from "@/lib/supabase-server";
 import { redirect } from "@/lib/i18n/navigation";
 import AuthState from "./auth/AuthState";
+import { Header } from "./Header";
+import { Footer } from "./Footer";
+import { getUserById } from "@/lib/services/user";
 
-export default async function ProtectedLayout({
+export async function ProtectedLayout({
   children,
   locale,
 }: {
   children: React.ReactNode;
   locale: string;
 }) {
-  const cookieStore = await cookies();
-  const supabase = await createClientForServer(cookieStore);
+  const supabase = await createClientForServer();
 
   const {
     data: { user },
@@ -26,12 +27,15 @@ export default async function ProtectedLayout({
     });
   }
 
+  const userFromDb = await getUserById(user.id);
+
   return (
     <>
-      <AuthState user={user} />
-      {/*<Header />*/}
-      <main>{children}</main>
-      {/*<Footer />*/}
+      <AuthState userFromAuth={user} userProfileFromDb={userFromDb}>
+        <Header isFullWidth={true} />
+        {children}
+        <Footer isFullWidth={true} />
+      </AuthState>
     </>
   );
 }

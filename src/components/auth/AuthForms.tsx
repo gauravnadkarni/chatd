@@ -19,9 +19,13 @@ import { SignupForm } from "./SignupForm";
 import { useSearchParams } from "next/navigation";
 import Spinner from "../Spinner";
 import { usePathname, useRouter } from "@/lib/i18n/navigation";
+import useUserStore from "@/lib/store/useUserStore";
 
 export function AuthForms() {
   const authFormTranslations = useTranslations("landingPage.auth");
+  const { setUserLoggingOut, isUserLoggingOut } = useUserStore(
+    (state) => state
+  );
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const router = useRouter();
@@ -81,6 +85,12 @@ export function AuthForms() {
       window.removeEventListener("message", handleMessage);
     };
   }, [isPending, data, isError]);
+
+  useEffect(() => {
+    if (isUserLoggingOut) {
+      setUserLoggingOut(false);
+    }
+  }, [isUserLoggingOut, setUserLoggingOut]);
 
   const SocialLoginButtons = () => (
     <div className="space-y-3">

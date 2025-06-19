@@ -1,6 +1,5 @@
 import { redirect } from "@/lib/i18n/navigation";
-import { createClientForServer } from "@/lib/supabase";
-import { cookies } from "next/headers";
+import { createClientForServer } from "@/lib/supabase-server";
 import { Footer } from "./Footer";
 import { Header } from "./Header";
 
@@ -11,8 +10,7 @@ export default async function PublicLayout({
   children: React.ReactNode;
   locale: string;
 }) {
-  const cookieStore = await cookies();
-  const supabase = await createClientForServer(cookieStore);
+  const supabase = await createClientForServer();
 
   const {
     data: { user },
@@ -21,16 +19,16 @@ export default async function PublicLayout({
 
   if (!error && user) {
     return redirect({
-      href: "/chat",
+      href: "/chats",
       locale: locale,
     });
   }
 
   return (
     <>
-      <Header />
+      <Header isFullWidth={false} />
       {children}
-      <Footer />
+      <Footer isFullWidth={false} />
     </>
   );
 }

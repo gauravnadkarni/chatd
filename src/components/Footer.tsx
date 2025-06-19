@@ -3,8 +3,9 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXTwitter } from "@fortawesome/free-brands-svg-icons";
 import { useTranslations } from "next-intl";
+import { cn } from "@/lib/utils";
 
-export const Footer = () => {
+export const Footer = ({ isFullWidth }: { isFullWidth: boolean }) => {
   const links = [
     {
       label: "Twitter",
@@ -17,7 +18,13 @@ export const Footer = () => {
   const footerTranslations = useTranslations("landingPage.footer");
   return (
     <footer className="w-full border-t border-border border-secondary mt-auto">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div
+        className={cn(
+          "mx-auto px-4 sm:px-6 lg:px-8",
+          isFullWidth && "w-full",
+          !isFullWidth && "max-w-6xl"
+        )}
+      >
         <div className="flex items-center justify-between h-16">
           <div className="text-sm text-muted-foreground">
             {footerTranslations("copyright", {

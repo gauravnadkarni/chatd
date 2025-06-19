@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import createMiddleware from "next-intl/middleware";
 import { routing } from "./lib/i18n/routing";
-import { createClientForServer } from "./lib/supabase";
+import { createClientForServer } from "./lib/supabase-server";
 import { cookies } from "next/headers";
 import { Locale } from "./lib/i18n/config";
 
@@ -51,9 +51,7 @@ export async function middleware(request: NextRequest) {
   const isPublicRoute = (route: string) =>
     publicRoutes.some((r) => r === route || r.startsWith(route));
 
-  const cookieStore = await cookies();
-
-  const supabase = await createClientForServer(cookieStore);
+  const supabase = await createClientForServer();
 
   const { data } = await supabase.auth.getUser();
 
@@ -62,7 +60,7 @@ export async function middleware(request: NextRequest) {
     // User has a session
     if (isPublicRoute(pathnameWithoutLocale)) {
       return NextResponse.redirect(
-        new URL(`/${currentLocale}/chat`, request.url)
+        new URL(`/${currentLocale}/chats`, request.url)
       );
     }
   } else {

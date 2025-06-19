@@ -218,3 +218,25 @@ TO authenticated
 USING (auth.uid() = user_id)
 WITH CHECK (auth.uid() = user_id);
 ```
+
+## RLS policies on storage
+
+1. Authenticated users are allowed to upload images
+
+```sql
+CREATE POLICY "Authenticated users are allowed to upload images"
+ON storage.objects
+FOR INSERT
+TO authenticated
+WITH CHECK (bucket_id = 'user-bucket');
+```
+
+2. Authenticated users are allowed to get images
+
+```sql
+CREATE POLICY "Authenticated users are allowed to get images"
+ON storage.objects
+FOR SELECT
+TO authenticated
+USING (bucket_id = 'user-bucket');
+```

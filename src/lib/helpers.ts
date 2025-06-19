@@ -1,10 +1,7 @@
-import { clsx, type ClassValue } from "clsx";
-import { twMerge } from "tailwind-merge";
 import { AbstractError } from "./errors/abstract-error";
-
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
-}
+import { v4 as uuidv4 } from "uuid";
+import { createClientForServer } from "./supabase-server";
+import { ServiceError } from "./errors/service-error";
 
 const isValidationError = (
   error: unknown
@@ -34,3 +31,40 @@ export const handleError = (
   }
   return { error: "Unknown error occured", code: 500, payload: {} };
 };
+
+export async function uploadFileToServer(
+  bucketName: string,
+  file: File,
+  folderPath: string = "",
+  fileNameWithExtension?: string
+) {
+  const fileNameForUpload: string =
+    fileNameWithExtension || getTemporaryFileName(file.name);
+  const filePath = `${folderPath}/${fileNameForUpload}`;
+
+  const supabase = await createClientForServer();
+  const { data, error } = await supabase.storage
+    .from(bucketName)
+    .upload(filePath, file, {
+      cacheControl: "3600",
+      upsert: false,
+      contentType: file.type,
+    });
+
+  if (error || data === null) {
+    throw new ServiceError("Failed to upload file", error);
+  }
+
+  console.log(data, "supabase data upload bucket");
+
+  const { data: publicUrlData } = supabase.storage
+    .from(bucketName)
+    .getPublicUrl(filePath);
+
+  const publicUrl = publicUrlData ? publicUrlData.publicUrl : null;
+
+  return publicUrl;
+}
+
+export const getTemporaryFileName = (file: string) =>
+  `${uuidv4()}.${file.split(".").pop()}`;

@@ -34,3 +34,12 @@ export const getUserByEmail = async (
     where: { email },
   });
 };
+
+export const update = async (
+  id: string,
+  profileData: Partial<ProfileModel>
+): Promise<ProfileModel> =>
+  prisma.profile.update({
+    where: { id },
+    data: profileData,
+  });

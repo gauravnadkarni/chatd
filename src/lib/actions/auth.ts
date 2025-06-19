@@ -1,6 +1,5 @@
 "use server";
 
-import { cookies } from "next/headers";
 import { ValidationError } from "../errors/validation-error";
 import {
   SigninFormData,
@@ -9,15 +8,19 @@ import {
   signupSchema,
 } from "../schemas/auth-schema";
 import { serverActionWrapper } from "../server-action-wrapper";
-import { Auth } from "../services/auth";
+import {
+  initiateAuthWithThirdPartyProvider,
+  signinWithPassword,
+  signupWithPassword,
+  validateAuthCodeWithProvider,
+} from "../services/auth";
 import { ThirdPartyAuthProviders } from "../types/ThirdPartyAuthProviders";
 
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL!;
 
 export const authWithProvider = async (provider: ThirdPartyAuthProviders) => {
   const serverAction = async () => {
-    const auth = new Auth(await cookies());
-    const data = await auth.initiateAuthWithThirdPartyProvider(
+    const data = await initiateAuthWithThirdPartyProvider(
       provider,
       `${baseUrl}/auth/callback`
     );
@@ -28,8 +31,7 @@ export const authWithProvider = async (provider: ThirdPartyAuthProviders) => {
 
 export const validateAuthWithProvider = async (authCode: string) => {
   const serverAction = async () => {
-    const auth = new Auth(await cookies());
-    const data = await auth.validateAuthCodeWithProvider(authCode);
+    const data = await validateAuthCodeWithProvider(authCode);
     return data;
   };
 
@@ -57,8 +59,7 @@ export const signup = async (signupData: SignupFormData) => {
         validationResult.error.flatten()
       );
     }
-    const auth = new Auth(await cookies());
-    const data = await auth.signupWithPassword(email, password, name);
+    const data = await signupWithPassword(email, password, name);
     return data;
   };
 
@@ -80,8 +81,7 @@ export const signin = async (signinData: SigninFormData) => {
         validationResult.error.flatten()
       );
     }
-    const auth = new Auth(await cookies());
-    const data = await auth.signinWithPassword(email, password);
+    const data = await signinWithPassword(email, password);
     return data;
   };
 

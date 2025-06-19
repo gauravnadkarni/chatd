@@ -42,6 +42,18 @@ export const signinSchema = z.object({
   password: passwordValidation,
 });
 
+export const passwordSchema = z
+  .object({
+    currentPassword: passwordValidation,
+    newPassword: passwordValidation,
+    confirmPassword: z.string().min(1, "Please confirm your new password"),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["confirmPassword"],
+  });
+
 // Export the type to be used in the form
 export type SignupFormData = z.infer<typeof signupSchema>;
 export type SigninFormData = z.infer<typeof signinSchema>;
+export type PasswordFormData = z.infer<typeof passwordSchema>;
