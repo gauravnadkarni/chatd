@@ -15,7 +15,7 @@ export const createUser = async (
       email,
       full_name: fullName,
       is_admin,
-      avatar_url: avatarUrl,
+      avatar_file_name: avatarUrl,
       website,
     },
   });

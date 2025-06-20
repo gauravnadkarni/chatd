@@ -13,8 +13,9 @@ import { getTemporaryFileName, uploadFileToServer } from "../helpers";
 import { ProfileModel } from "../models/profile";
 
 const SUPABASE_USER_STORAGE_BUCKET_NAME =
-  process.env.SUPABASE_USER_STORAGE_BUCKET_NAME;
-const SUPABASE_USER_PIC_FOLDER_NAME = process.env.SUPABASE_USER_PIC_FOLDER_NAME;
+  process.env.NEXT_PUBLIC_SUPABASE_USER_STORAGE_BUCKET_NAME;
+const SUPABASE_USER_PIC_FOLDER_NAME =
+  process.env.NEXT_PUBLIC_SUPABASE_USER_PIC_FOLDER_NAME;
 
 export const changePassword = async (passwordData: PasswordFormData) => {
   const serverAction = async () => {
@@ -96,7 +97,7 @@ export const updateUserProfile = async (
         SUPABASE_USER_PIC_FOLDER_NAME!,
         tempFileName
       );
-      dataToBePersisted.avatar_url = tempFileName;
+      dataToBePersisted.avatar_file_name = tempFileName;
     }
 
     await updateProfile(userid, dataToBePersisted);

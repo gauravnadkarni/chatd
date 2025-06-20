@@ -25,7 +25,11 @@ import {
   FormMessage,
 } from "../ui/form";
 import { ProfileModel } from "@/lib/models/profile";
-import { useGetProfile, useUpdateProfile } from "@/hooks/useProfile";
+import {
+  useGetProfile,
+  useProfileImage,
+  useUpdateProfile,
+} from "@/hooks/useProfile";
 import useUserStore from "@/lib/store/useUserStore";
 import Spinner from "../Spinner";
 
@@ -38,10 +42,19 @@ export function ProfileInfo({ initialData }: ProfileInfoProps) {
   const toast = useToast();
   const isMobile = useIsMobile();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [avatarPreview, setAvatarPreview] = useState(initialData.avatar_url);
   const { mutateAsync: updateProfile, isPending: isUpdatePending } =
     useUpdateProfile(initialData.id);
   const { mutateAsync: getProfile } = useGetProfile(initialData.id);
+  const {
+    data: profileImagedata,
+    isPending: profileImagePending,
+    isFetching: profileImageFetching,
+    isLoading: profileImageLoading,
+    error: profileImageError,
+  } = useProfileImage(initialData.avatar_file_name);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(
+    profileImagedata?.url || null
+  );
   const { setUserFromDb } = useUserStore((state) => state);
 
   const form = useForm<ClientProfileFormData>({
@@ -57,6 +70,13 @@ export function ProfileInfo({ initialData }: ProfileInfoProps) {
   };
 
   useEffect(() => {
+    if (profileImagedata?.url && !avatarPreview) {
+      setAvatarPreview(profileImagedata.url);
+    }
+  }, [profileImagedata, avatarPreview, setAvatarPreview]);
+
+  useEffect(() => {
+    console.log("avatar", form.watch("avatar"));
     const currentFiles = form.watch("avatar");
     const file =
       currentFiles && currentFiles.length > 0 ? currentFiles[0] : null;
@@ -110,7 +130,12 @@ export function ProfileInfo({ initialData }: ProfileInfoProps) {
       },
     });
   };
-
+  console.log(
+    profileImageFetching,
+    profileImagePending,
+    profileImageLoading,
+    "pending state"
+  );
   return (
     <div className="space-y-6">
       <Form {...form}>
@@ -123,8 +148,16 @@ export function ProfileInfo({ initialData }: ProfileInfoProps) {
                 <FormLabel>Avatar</FormLabel>
                 <div className="flex flex-col items-center space-y-4">
                   <div className="relative group">
-                    <Avatar className="h-24 w-24">
-                      <AvatarImage src={avatarPreview!} alt="Profile picture" />
+                    <Avatar className="h-24 w-24 relative border border-full border-primary">
+                      {(profileImageFetching || profileImageLoading) && (
+                        <div className="absolute inset-0 bg-primary/10 flex items-center justify-center w-full h-full bg-primary/70">
+                          <Spinner classValues="h-4 w-4" centerAligned />
+                        </div>
+                      )}
+                      <AvatarImage
+                        src={avatarPreview || undefined}
+                        alt="Profile picture"
+                      />
                       <AvatarFallback className="bg-primary/10 text-2xl">
                         {initialData?.full_name
                           ? initialData?.full_name

@@ -53,7 +53,7 @@ This project will leverage a modern, performant, and scalable technology stack.
 The application's data will be stored in a PostgreSQL database managed by Supabase. RLS (Row Level Security) will be rigorously applied to all `public` tables.
 
 - **`auth.users`:** (Supabase Managed) - Core user authentication data.
-- **`public.profiles`:** Stores public user profiles (`name`, `avatar_url`, `online_at`) and includes an `is_admin` flag for admin user identification. Links to `auth.users` (1:1).
+- **`public.profiles`:** Stores public user profiles (`name`, `avatar_file_name`, `online_at`) and includes an `is_admin` flag for admin user identification. Links to `auth.users` (1:1).
 - **`public.user_device_tokens`:** Stores Firebase Cloud Messaging (FCM) tokens for each user's devices (`fcm_token`, `platform`, `last_seen_at`) to enable multi-device push notifications. Links to `auth.users` (Many:1).
 - **`public.contacts`:** Manages established, mutual contact relationships between users (`user_id`, `contact_id`). Models a Many-to-Many relationship between users.
 - **`public.contact_requests`:** Manages the state of pending, accepted, or declined contact requests (`sender_id`, `recipient_id`, `status`). Links to `auth.users` (Many:1 for both sender and recipient).
@@ -69,122 +69,122 @@ The application's data will be stored in a PostgreSQL database managed by Supaba
 #### 4.1 User Authentication & Management
 
 - **User Stories:**
-    - As a new user, I want to sign up with my email and password so I can create an account.
-    - As an existing user, I want to log in with my email and password or social accounts (Google, Facebook) so I can access my chats.
-    - As a user, I want to be able to update my profile information (name, avatar) after logging in.
-    - As a user, I want my profile to be automatically created when I sign up.
+  - As a new user, I want to sign up with my email and password so I can create an account.
+  - As an existing user, I want to log in with my email and password or social accounts (Google, Facebook) so I can access my chats.
+  - As a user, I want to be able to update my profile information (name, avatar) after logging in.
+  - As a user, I want my profile to be automatically created when I sign up.
 - **Requirements:**
-    - Email/Password authentication.
-    - Google and Facebook OAuth authentication.
-    - User profile creation (`public.profiles`) upon `auth.users` insertion via database trigger.
-    - Ability to update user `name` and `avatar_url` in `public.profiles`.
-    - Secure password handling and session management via Supabase Auth.
+  - Email/Password authentication.
+  - Google and Facebook OAuth authentication.
+  - User profile creation (`public.profiles`) upon `auth.users` insertion via database trigger.
+  - Ability to update user `name` and `avatar_file_name` in `public.profiles`.
+  - Secure password handling and session management via Supabase Auth.
 
 #### 4.2 Contact List Management
 
 - **User Stories:**
-    - As a user, I want to search for other users by name or email to add them as contacts.
-    - As a user, I want to send a contact request to another user.
-    - As a user, I want to see a list of contact requests I have sent.
-    - As a user, I want to see a list of pending contact requests I have received.
-    - As a user, I want to accept or decline incoming contact requests.
-    - As a user, I want to see my list of established contacts.
-    - As a user, I want to be able to remove an existing contact.
+  - As a user, I want to search for other users by name or email to add them as contacts.
+  - As a user, I want to send a contact request to another user.
+  - As a user, I want to see a list of contact requests I have sent.
+  - As a user, I want to see a list of pending contact requests I have received.
+  - As a user, I want to accept or decline incoming contact requests.
+  - As a user, I want to see my list of established contacts.
+  - As a user, I want to be able to remove an existing contact.
 - **Requirements:**
-    - User search functionality against `public.profiles`.
-    - `public.contact_requests` table to manage request states ('pending', 'accepted', 'declined', 'blocked').
-    - Server Action for sending a contact request (insert into `contact_requests`).
-    - Server Action for accepting a request (update `contact_requests` status to 'accepted', insert mutual entries into `public.contacts`).
-    - Server Action for declining a request (update `contact_requests` status to 'declined').
-    - Display of sent, received, and established contact lists in the UI.
+  - User search functionality against `public.profiles`.
+  - `public.contact_requests` table to manage request states ('pending', 'accepted', 'declined', 'blocked').
+  - Server Action for sending a contact request (insert into `contact_requests`).
+  - Server Action for accepting a request (update `contact_requests` status to 'accepted', insert mutual entries into `public.contacts`).
+  - Server Action for declining a request (update `contact_requests` status to 'declined').
+  - Display of sent, received, and established contact lists in the UI.
 
 #### 4.3 One-on-One Messaging
 
 - **User Stories:**
-    - As a user, I want to send text messages to a specific contact.
-    - As a user, I want to receive text messages in real-time from my contacts.
-    - As a user, I want to view the history of my conversations with a contact.
-    - As a user, I want to know when my message has been read by the recipient (read receipts).
+  - As a user, I want to send text messages to a specific contact.
+  - As a user, I want to receive text messages in real-time from my contacts.
+  - As a user, I want to view the history of my conversations with a contact.
+  - As a user, I want to know when my message has been read by the recipient (read receipts).
 - **Requirements:**
-    - Real-time message sending and receiving using Supabase Realtime for in-app delivery.
-    - Messages stored in `public.messages` with `recipient_id`.
-    - Display of chat history for each 1:1 conversation.
-    - Ability to update `read_at` timestamp in `public.messages` and `last_seen_message_id`, `unread_count` in `public.user_conversation_status` upon message viewing.
+  - Real-time message sending and receiving using Supabase Realtime for in-app delivery.
+  - Messages stored in `public.messages` with `recipient_id`.
+  - Display of chat history for each 1:1 conversation.
+  - Ability to update `read_at` timestamp in `public.messages` and `last_seen_message_id`, `unread_count` in `public.user_conversation_status` upon message viewing.
 
 #### 4.4 Group Chat Management
 
 - **User Stories:**
-    - As a user, I want to create a new chat group with a chosen name.
-    - As a group creator, I want to invite/add other users to my group.
-    - As a group member, I want to send text messages within the group.
-    - As a group member, I want to receive text messages from other group members in real-time.
-    - As a group member, I want to view the history of my group conversations.
+  - As a user, I want to create a new chat group with a chosen name.
+  - As a group creator, I want to invite/add other users to my group.
+  - As a group member, I want to send text messages within the group.
+  - As a group member, I want to receive text messages from other group members in real-time.
+  - As a group member, I want to view the history of my group conversations.
 - **Requirements:**
-    - Group creation and management of `public.groups` table.
-    - Member management in `public.group_members` table (adding/removing members).
-    - Real-time group message sending and receiving using Supabase Realtime.
-    - Messages stored in `public.messages` with `group_id`.
-    - Display of chat history for each group conversation.
+  - Group creation and management of `public.groups` table.
+  - Member management in `public.group_members` table (adding/removing members).
+  - Real-time group message sending and receiving using Supabase Realtime.
+  - Messages stored in `public.messages` with `group_id`.
+  - Display of chat history for each group conversation.
 
 #### 4.5 Media Sharing
 
 - **User Stories:**
-    - As a user, I want to send images within a message.
-    - As a user, I want to send common file types (e.g., PDFs, documents) within a message.
-    - As a user, I want to view/download received media files.
+  - As a user, I want to send images within a message.
+  - As a user, I want to send common file types (e.g., PDFs, documents) within a message.
+  - As a user, I want to view/download received media files.
 - **Requirements:**
-    - Integration with Supabase Storage for file uploads.
-    - `media_url` and `media_type` fields in `public.messages` to store media references.
-    - UI to select and preview files before sending.
-    - UI to display images inline and provide download links for other file types.
+  - Integration with Supabase Storage for file uploads.
+  - `media_url` and `media_type` fields in `public.messages` to store media references.
+  - UI to select and preview files before sending.
+  - UI to display images inline and provide download links for other file types.
 
 #### 4.6 Real-time Presence
 
 - **User Stories:**
-    - As a user, I want to see if my contacts are currently online or offline.
-    - As a user, I want to see if a contact is typing a message in a one-on-one conversation.
+  - As a user, I want to see if my contacts are currently online or offline.
+  - As a user, I want to see if a contact is typing a message in a one-on-one conversation.
 - **Requirements:**
-    - Update `online_at` in `public.profiles` regularly for presence indication (e.g., every 15-30 seconds).
-    - Supabase Realtime channels for presence broadcasting and subscription.
-    - Mechanism for sending and receiving typing indicators within active conversations.
+  - Update `online_at` in `public.profiles` regularly for presence indication (e.g., every 15-30 seconds).
+  - Supabase Realtime channels for presence broadcasting and subscription.
+  - Mechanism for sending and receiving typing indicators within active conversations.
 
 #### 4.7 Push Notifications
 
 - **User Stories:**
-    - As a user, I want to receive notifications for new messages when my app is closed or in the background.
-    - As a user, I want to receive notifications for new contact requests when my app is closed or in the background.
+  - As a user, I want to receive notifications for new messages when my app is closed or in the background.
+  - As a user, I want to receive notifications for new contact requests when my app is closed or in the background.
 - **Requirements:**
-    - Firebase Cloud Messaging (FCM) integration.
-    - Client-side generation and management of `fcm_token`s, storing them in `public.user_device_tokens`.
-    - Supabase Database Triggers on `public.messages` and `public.contact_requests` to invoke Supabase Edge Functions.
-    - Supabase Edge Functions to send push notification payloads to FCM using `fcm_token`s.
-    - Robust handling of invalid/stale `fcm_token`s on the backend.
+  - Firebase Cloud Messaging (FCM) integration.
+  - Client-side generation and management of `fcm_token`s, storing them in `public.user_device_tokens`.
+  - Supabase Database Triggers on `public.messages` and `public.contact_requests` to invoke Supabase Edge Functions.
+  - Supabase Edge Functions to send push notification payloads to FCM using `fcm_token`s.
+  - Robust handling of invalid/stale `fcm_token`s on the backend.
 
 #### 4.8 Progressive Web App (PWA) Enhancements
 
 - **User Stories:**
-    - As a user, I want to be able to install the chat application to my device's home screen.
-    - As a user, I want the application to function with basic capabilities even when offline (e.g., show cached UI, previously loaded messages).
+  - As a user, I want to be able to install the chat application to my device's home screen.
+  - As a user, I want the application to function with basic capabilities even when offline (e.g., show cached UI, previously loaded messages).
 - **Requirements:**
-    - Web App Manifest file (`manifest.json`) configuration.
-    - Service Worker implementation for caching static assets and basic offline capabilities.
-    - Service Worker to intercept and handle FCM messages when the app is in the background.
+  - Web App Manifest file (`manifest.json`) configuration.
+  - Service Worker implementation for caching static assets and basic offline capabilities.
+  - Service Worker to intercept and handle FCM messages when the app is in the background.
 
 #### 4.9 Admin Module
 
 - **User Stories:**
-    - As an admin user, I want to access a dedicated dashboard to view application statistics.
-    - As an admin user, I want to see the total number of registered users.
-    - As an admin user, I want to see the total number of devices registered for notifications.
-    - As an admin user, I want to see the current number of active users.
-    - As an admin user, I want to see the volume of messages sent per day, week, and month.
-    - As an admin user, I want to view details of all registered users.
+  - As an admin user, I want to access a dedicated dashboard to view application statistics.
+  - As an admin user, I want to see the total number of registered users.
+  - As an admin user, I want to see the total number of devices registered for notifications.
+  - As an admin user, I want to see the current number of active users.
+  - As an admin user, I want to see the volume of messages sent per day, week, and month.
+  - As an admin user, I want to view details of all registered users.
 - **Requirements:**
-    - Dedicated `is_admin` boolean flag in `public.profiles` for admin user identification.
-    - Protected Next.js route (`/admin`) accessible only by the admin user.
-    - Server Actions to fetch aggregated data (counts, message volume) directly from `public.profiles`, `public.user_device_tokens`, and `public.messages` tables.
-    - UI to display stats using cards and charts.
-    - UI to list and view details of all users (e.g., in a table).
+  - Dedicated `is_admin` boolean flag in `public.profiles` for admin user identification.
+  - Protected Next.js route (`/admin`) accessible only by the admin user.
+  - Server Actions to fetch aggregated data (counts, message volume) directly from `public.profiles`, `public.user_device_tokens`, and `public.messages` tables.
+  - UI to display stats using cards and charts.
+  - UI to list and view details of all users (e.g., in a table).
 
 ---
 

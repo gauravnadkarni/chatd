@@ -16,7 +16,7 @@ model Profile {
   updated_at DateTime? @updatedAt @map("updated_at") @db.Timestamptz(6)
   email   String?   @unique
   full_name  String?   @map("full_name")
-  avatar_url String?   @map("avatar_url")
+  avatar_file_name String?   @map("avatar_file_name")
   website    String?
   is_admin   Boolean   @default(false) @map("is_admin")
   online_at  DateTime? @map("online_at") @db.Timestamptz(6)

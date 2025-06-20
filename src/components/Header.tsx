@@ -20,15 +20,27 @@ import { ChevronDown, LogOut, Settings, User } from "lucide-react";
 import { createClientForBrowser } from "@/lib/supabase-client";
 import { useToast } from "@/hooks/useToast";
 import { useIsMobile } from "@/hooks/useIsMobile";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { useProfileImage } from "@/hooks/useProfile";
+import Spinner from "./Spinner";
 
 export function Header({ isFullWidth }: { isFullWidth: boolean }) {
   const headerTranslations = useTranslations("landingPage.header");
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const { userFromAuth: currentUser, setUserLoggingOut } = useUserStore(
-    (store) => store
-  );
+  const {
+    userFromAuth: currentUser,
+    userFromDb,
+    setUserLoggingOut,
+  } = useUserStore((store) => store);
+  const {
+    data: profileImagedata,
+    isPending: profileImagePending,
+    isFetching: profileImageFetching,
+    isLoading: profileImageLoading,
+    error: profileImageError,
+  } = useProfileImage(userFromDb?.avatar_file_name);
   const supabase = createClientForBrowser();
   const toast = useToast();
   const isMobile = useIsMobile();
@@ -123,11 +135,34 @@ export function Header({ isFullWidth }: { isFullWidth: boolean }) {
                 align="end"
                 className="w-56 bg-white/95 backdrop-blur-sm border-white/20"
               >
-                <div className="px-3 py-2 border-b border-gray-200">
-                  <p className="text-sm font-medium text-gray-900">
-                    {currentUser.email}
-                  </p>
-                  <p className="text-xs text-gray-600">{currentUser.email}</p>
+                <div className="px-3 py-2 border-b border-gray-200 flex gap-2 justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-gray-900">
+                      {currentUser.email}
+                    </p>
+                    <p className="text-xs text-gray-600">{currentUser.email}</p>
+                  </div>
+                  <div>
+                    <Avatar className="h-8 w-8 relative border border-full border-primary">
+                      {(profileImageFetching || profileImageLoading) && (
+                        <div className="absolute inset-0 bg-primary/10 flex items-center justify-center w-full h-full bg-primary/70">
+                          <Spinner classValues="h-4 w-4" centerAligned />
+                        </div>
+                      )}
+                      <AvatarImage
+                        src={profileImagedata?.url || undefined}
+                        alt="Profile picture"
+                      />
+                      <AvatarFallback className="bg-primary/10 text-2xl">
+                        {userFromDb?.full_name
+                          ? userFromDb?.full_name
+                              .split(" ")
+                              .map((n) => n[0])
+                              .join("")
+                          : "NA"}
+                      </AvatarFallback>
+                    </Avatar>
+                  </div>
                 </div>
                 <DropdownMenuItem
                   onClick={() => {

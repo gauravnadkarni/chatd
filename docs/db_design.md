@@ -22,7 +22,7 @@
 - **Key Fields:**
   - `id` (UUID, Primary Key, Foreign Key to `auth.users.id`)
   - `name` (Text): User's display name.
-  - `avatar_url` (Text): URL to user's profile picture in Supabase Storage.
+  - `avatar_file_name` (Text): URL to user's profile picture in Supabase Storage.
   - `online_at` (Timestamp): Timestamp for last known online activity, used for presence.
   - **`is_admin` (Boolean, Default `FALSE`): Indicates if this user is an administrator.**
   - `created_at` (Timestamp)
