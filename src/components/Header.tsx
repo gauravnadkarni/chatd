@@ -173,13 +173,13 @@ export function Header({ isFullWidth }: { isFullWidth: boolean }) {
                   <User className="h-4 w-4" />
                   <span>Profile</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem
+                {/*<DropdownMenuItem
                   onClick={() => {}}
                   className="flex items-center space-x-2 cursor-pointer hover:bg-blue-50"
                 >
                   <Settings className="h-4 w-4" />
                   <span>Account Settings</span>
-                </DropdownMenuItem>
+                </DropdownMenuItem>*/}
                 <DropdownMenuSeparator className="bg-gray-200" />
                 <DropdownMenuItem
                   onClick={() => {

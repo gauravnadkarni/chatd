@@ -64,8 +64,8 @@ _Dependencies:_ All of 1.0 (Phase 1)
 
 _Dependencies:_ 2.1.6 (authenticated user context)
 
-- 2.2.1 Implement User Profile Update UI.
-- 2.2.2 Implement Profile Update Server Action (for `name`, `avatar_file_name`).
+- [x] 2.2.1 Implement User Profile Update UI.
+- [x] 2.2.2 Implement Profile Update Server Action (for `name`, `avatar_file_name`).
 
 ---
 
