@@ -45,10 +45,6 @@ export default function ProfileContainer() {
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
       {/* Header */}
-      <div className="flex items-center gap-4 mb-8">
-        <h1 className="text-3xl font-bold text-white">Profile Settings</h1>
-      </div>
-
       {/* Main Content Card with Tabs */}
       <Card className="bg-white/95 backdrop-blur-sm border-white/20 shadow-xl">
         <Tabs defaultValue="profile" className="w-full">

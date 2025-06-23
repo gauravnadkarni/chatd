@@ -153,7 +153,7 @@ export function Header({ isFullWidth }: { isFullWidth: boolean }) {
                         src={profileImagedata?.url || undefined}
                         alt="Profile picture"
                       />
-                      <AvatarFallback className="bg-primary/10 text-2xl">
+                      <AvatarFallback className="bg-primary/10 text-md">
                         {userFromDb?.full_name
                           ? userFromDb?.full_name
                               .split(" ")
