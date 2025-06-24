@@ -7,7 +7,7 @@ import {
   SignupFormData,
   signupSchema,
 } from "../schemas/auth-schema";
-import { serverActionWrapper } from "../server-action-wrapper";
+import { serverActionWrapperWithoutAuthCheck } from "../server-action-wrapper";
 import {
   initiateAuthWithThirdPartyProvider,
   signinWithPassword,
@@ -26,7 +26,7 @@ export const authWithProvider = async (provider: ThirdPartyAuthProviders) => {
     );
     return data;
   };
-  return serverActionWrapper(serverAction);
+  return serverActionWrapperWithoutAuthCheck(serverAction);
 };
 
 export const validateAuthWithProvider = async (authCode: string) => {
@@ -35,7 +35,7 @@ export const validateAuthWithProvider = async (authCode: string) => {
     return data;
   };
 
-  return serverActionWrapper(serverAction);
+  return serverActionWrapperWithoutAuthCheck(serverAction);
 };
 
 export const signup = async (signupData: SignupFormData) => {
@@ -63,7 +63,7 @@ export const signup = async (signupData: SignupFormData) => {
     return data;
   };
 
-  return serverActionWrapper(serverAction);
+  return serverActionWrapperWithoutAuthCheck(serverAction);
 };
 
 export const signin = async (signinData: SigninFormData) => {
@@ -85,5 +85,5 @@ export const signin = async (signinData: SigninFormData) => {
     return data;
   };
 
-  return serverActionWrapper(serverAction);
+  return serverActionWrapperWithoutAuthCheck(serverAction);
 };

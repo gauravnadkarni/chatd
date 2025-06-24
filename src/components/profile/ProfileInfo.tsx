@@ -38,7 +38,7 @@ interface ProfileInfoProps {
 }
 
 export function ProfileInfo({ initialData }: ProfileInfoProps) {
-  //const t = useTranslations("profile");
+  const profileTabTranslations = useTranslations("profile.profileTab");
   const toast = useToast();
   const isMobile = useIsMobile();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -117,25 +117,27 @@ export function ProfileInfo({ initialData }: ProfileInfoProps) {
             setUserFromDb(user);
           },
         });
-        toast.success("Profile updated", {
-          description: "Your profile has been updated successfully",
-          position: isMobile ? "top-center" : "bottom-right",
-        });
+        toast.success(
+          profileTabTranslations("profileUpdateSuccessToastTitle"),
+          {
+            description: profileTabTranslations(
+              "profileUpdateSuccessToastDescription"
+            ),
+            position: isMobile ? "top-center" : "bottom-right",
+          }
+        );
       },
       onError: (error) => {
-        toast.error("Update failed", {
-          description: "Failed to update profile. Please try again.",
+        toast.error(profileTabTranslations("profileUpdateErrorToastTitle"), {
+          description: profileTabTranslations(
+            "profileUpdateErrorToastDescription"
+          ),
           position: isMobile ? "top-center" : "bottom-right",
         });
       },
     });
   };
-  console.log(
-    profileImageFetching,
-    profileImagePending,
-    profileImageLoading,
-    "pending state"
-  );
+
   return (
     <div className="space-y-6">
       <Form {...form}>
@@ -145,7 +147,9 @@ export function ProfileInfo({ initialData }: ProfileInfoProps) {
             name="avatar"
             render={({ field: { onChange, value, ...field } }) => (
               <FormItem>
-                <FormLabel>Avatar</FormLabel>
+                <FormLabel>
+                  {profileTabTranslations("formLabelAvatar")}
+                </FormLabel>
                 <div className="flex flex-col items-center space-y-4">
                   <div className="relative group">
                     <Avatar className="h-24 w-24 relative border border-full border-primary">
@@ -156,7 +160,7 @@ export function ProfileInfo({ initialData }: ProfileInfoProps) {
                       )}
                       <AvatarImage
                         src={avatarPreview || undefined}
-                        alt="Profile picture"
+                        alt={profileTabTranslations("formLabelAvatarAltText")}
                       />
                       <AvatarFallback className="bg-primary/10 text-2xl">
                         {initialData?.full_name
@@ -191,7 +195,9 @@ export function ProfileInfo({ initialData }: ProfileInfoProps) {
                         className="hidden"
                       />
                     </FormControl>
-                    <FormDescription>{"Upload a new avatar"}</FormDescription>
+                    <FormDescription>
+                      {profileTabTranslations("formLabelAvatarDescription")}
+                    </FormDescription>
                     <FormMessage />
                   </div>
                 </div>
@@ -203,12 +209,14 @@ export function ProfileInfo({ initialData }: ProfileInfoProps) {
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Name</FormLabel>
+                <FormLabel>{profileTabTranslations("formLabelName")}</FormLabel>
                 <div className="relative">
                   <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                   <FormControl>
                     <Input
-                      placeholder="Enter your name"
+                      placeholder={profileTabTranslations(
+                        "formControlNamePlaceholder"
+                      )}
                       className="pl-10"
                       {...field}
                     />
@@ -220,17 +228,22 @@ export function ProfileInfo({ initialData }: ProfileInfoProps) {
           />
 
           <div className="space-y-2">
-            <label className="text-sm font-medium leading-none">Email</label>
+            <label className="text-sm font-medium leading-none">
+              {profileTabTranslations("formLabelEmail")}
+            </label>
             <div className="relative">
               <Input
                 type="email"
                 value={initialData!.email!}
                 disabled
                 className="bg-muted/50 text-muted-foreground cursor-not-allowed"
+                placeholder={profileTabTranslations(
+                  "formLabelEmailPlaceholder"
+                )}
               />
             </div>
             <p className="text-xs text-muted-foreground">
-              Email address cannot be changed
+              {profileTabTranslations("formLabelEmailLockedMessage")}
             </p>
           </div>
 
@@ -242,7 +255,7 @@ export function ProfileInfo({ initialData }: ProfileInfoProps) {
             {form.formState.isSubmitting || isUpdatePending ? (
               <Spinner classValues="mr-2 h-4 w-4" />
             ) : null}
-            Update Profile
+            {profileTabTranslations("formUpdateButtonText")}
           </Button>
         </form>
       </Form>

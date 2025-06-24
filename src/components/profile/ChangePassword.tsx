@@ -1,11 +1,17 @@
-import { createClientForBrowser } from "@/lib/supabase-client";
 import { Button } from "@/components/ui/button";
-import { useRouter } from "@/lib/i18n/navigation";
-import { Alert, AlertDescription } from "../ui/alert";
-import { AlertCircle, Eye, EyeOff, Lock } from "lucide-react";
-import { useForm } from "react-hook-form";
+import { useIsMobile } from "@/hooks/useIsMobile";
+import { useChangePassword } from "@/hooks/usePasswordAuth";
+import { useToast } from "@/hooks/useToast";
 import { PasswordFormData, passwordSchema } from "@/lib/schemas/auth-schema";
+import { SignInProviders } from "@/lib/types/ThirdPartyAuthProviders";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { User } from "@supabase/supabase-js";
+import { AlertCircle, Eye, EyeOff, Lock } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import Spinner from "../Spinner";
+import { Alert, AlertDescription } from "../ui/alert";
 import {
   Form,
   FormControl,
@@ -15,14 +21,6 @@ import {
   FormMessage,
 } from "../ui/form";
 import { Input } from "../ui/input";
-import Spinner from "../Spinner";
-import { useTranslations } from "next-intl";
-import { useState } from "react";
-import { useToast } from "@/hooks/useToast";
-import { useIsMobile } from "@/hooks/useIsMobile";
-import { useChangePassword } from "@/hooks/usePasswordAuth";
-import { SignInProviders } from "@/lib/types/ThirdPartyAuthProviders";
-import { User } from "@supabase/supabase-js";
 
 export default function ChangePassword({
   userFromAuth,
@@ -35,7 +33,7 @@ export default function ChangePassword({
   loginMethod: SignInProviders | null;
   onPasswordResetSuccessCallback: () => void;
 }) {
-  //const t = useTranslations("profile");
+  const profileTabTranslations = useTranslations("profile.passwordTab");
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -60,9 +58,8 @@ export default function ChangePassword({
     console.log(data, "submitted data");
     changePassword(data, {
       onSuccess: () => {
-        toast.success("Password changed successfully", {
-          description:
-            "Password changed successfully. You will be redirected to login page in 3 seconds",
+        toast.success(profileTabTranslations("changePasswordToastSuccess"), {
+          description: `${profileTabTranslations("changePasswordToastSuccess")} ${profileTabTranslations("changePasswordLogoutRedirectToast")}`,
           position: isMobile ? "top-center" : "bottom-right",
           duration: 3000,
         });
@@ -71,10 +68,13 @@ export default function ChangePassword({
         }, 3000);
       },
       onError: () => {
-        toast.error("Please try again.", {
-          position: isMobile ? "top-center" : "bottom-right",
-          duration: 3000,
-        });
+        toast.error(
+          profileTabTranslations("changePasswordErrorTryAgainToast"),
+          {
+            position: isMobile ? "top-center" : "bottom-right",
+            duration: 3000,
+          }
+        );
       },
     });
   };
@@ -84,8 +84,9 @@ export default function ChangePassword({
       <Alert className="border-blue-200 bg-blue-50">
         <AlertCircle className="h-4 w-4 text-blue-600" />
         <AlertDescription className="text-blue-800">
-          You signed in using {loginMethod}. Password changes must be made
-          through your {loginMethod} account settings.
+          {profileTabTranslations("signInMethodMessage", {
+            loginMethod: loginMethod || "",
+          })}
         </AlertDescription>
       </Alert>
     );
@@ -98,14 +99,18 @@ export default function ChangePassword({
           name="currentPassword"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Current Password</FormLabel>
+              <FormLabel>
+                {profileTabTranslations("formLabelCurrentPassword")}
+              </FormLabel>
               <FormControl>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                   <Input
                     {...field}
                     type={showCurrentPassword ? "text" : "password"}
-                    placeholder="Enter current password"
+                    placeholder={profileTabTranslations(
+                      "formLabelCurrentPassword"
+                    )}
                     className="pl-10"
                   />
                   <button
@@ -131,14 +136,18 @@ export default function ChangePassword({
           name="newPassword"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>New Password</FormLabel>
+              <FormLabel>
+                {profileTabTranslations("formLabelNewPassword")}
+              </FormLabel>
               <FormControl>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                   <Input
                     {...field}
                     type={showNewPassword ? "text" : "password"}
-                    placeholder="Enter new password"
+                    placeholder={profileTabTranslations(
+                      "formNewPasswordPlaceholder"
+                    )}
                     className="pl-10"
                   />
                   <button
@@ -164,14 +173,18 @@ export default function ChangePassword({
           name="confirmPassword"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Confirm New Password</FormLabel>
+              <FormLabel>
+                {profileTabTranslations("formLabelConfirmPassword")}
+              </FormLabel>
               <FormControl>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                   <Input
                     {...field}
                     type={showConfirmPassword ? "text" : "password"}
-                    placeholder="Confirm new password"
+                    placeholder={profileTabTranslations(
+                      "formConfirmPasswordPlaceholder"
+                    )}
                     className="pl-10"
                   />
                   <button
@@ -193,11 +206,25 @@ export default function ChangePassword({
         />
 
         <div className="text-xs text-muted-foreground space-y-1 bg-muted/50 p-3 rounded-md">
-          <p className="font-medium">Password requirements:</p>
+          <p className="font-medium">
+            {profileTabTranslations("passwordRequirements.title")}
+          </p>
           <ul className="list-disc list-inside space-y-1 ml-2">
-            <li>At least 8 characters long</li>
-            <li>Contains uppercase and lowercase letters</li>
-            <li>Contains at least one number</li>
+            <li>
+              {profileTabTranslations(
+                "passwordRequirements.atLeast8CharactersLong"
+              )}
+            </li>
+            <li>
+              {profileTabTranslations(
+                "passwordRequirements.containsUppercaseAndLowercaseLetters"
+              )}
+            </li>
+            <li>
+              {profileTabTranslations(
+                "passwordRequirements.containsAtLeastOneNumber"
+              )}
+            </li>
           </ul>
         </div>
 
@@ -209,7 +236,7 @@ export default function ChangePassword({
           {form.formState.isSubmitting || isPending ? (
             <Spinner classValues="mr-2 h-4 w-4" />
           ) : null}
-          Update Password
+          {profileTabTranslations("formUpdateButtonText")}
         </Button>
       </form>
     </Form>

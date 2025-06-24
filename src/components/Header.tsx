@@ -16,7 +16,14 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { Button } from "./ui/button";
-import { ChevronDown, LogOut, Settings, User } from "lucide-react";
+import {
+  ChevronDown,
+  Cog,
+  ContactRound,
+  LogOut,
+  Settings,
+  User,
+} from "lucide-react";
 import { createClientForBrowser } from "@/lib/supabase-client";
 import { useToast } from "@/hooks/useToast";
 import { useIsMobile } from "@/hooks/useIsMobile";
@@ -119,79 +126,81 @@ export function Header({ isFullWidth }: { isFullWidth: boolean }) {
             </div>
           )}
           {currentUser && (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="outline"
-                  className="flex items-center hover:bg-primary/50 focus:bg-primary/70"
+            <div className="flex justify-end items-center space-x-3">
+              <Link href="/contacts" className="text-gray-500">
+                <ContactRound size={24} />
+              </Link>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <div className="text-gray-500 border p-1 rounded-full flex items-center justify-center">
+                    <Settings size={24} />
+                    <ChevronDown size={8} />
+                  </div>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  align="end"
+                  className="w-56 bg-white/95 backdrop-blur-sm border-white/20"
                 >
-                  <div className="w-4 h-4 rounded-full flex items-center justify-center">
+                  <div className="px-3 py-2 border-b border-gray-200 flex gap-2 justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-gray-900">
+                        {currentUser.email}
+                      </p>
+                      <p className="text-xs text-gray-600">
+                        {currentUser.email}
+                      </p>
+                    </div>
+                    <div>
+                      <Avatar className="h-8 w-8 relative border border-full border-primary">
+                        {(profileImageFetching || profileImageLoading) && (
+                          <div className="absolute inset-0 bg-primary/10 flex items-center justify-center w-full h-full bg-primary/70">
+                            <Spinner classValues="h-4 w-4" centerAligned />
+                          </div>
+                        )}
+                        <AvatarImage
+                          src={profileImagedata?.url || undefined}
+                          alt="Profile picture"
+                        />
+                        <AvatarFallback className="bg-primary/10 text-md">
+                          {userFromDb?.full_name
+                            ? userFromDb?.full_name
+                                .split(" ")
+                                .map((n) => n[0])
+                                .join("")
+                            : "NA"}
+                        </AvatarFallback>
+                      </Avatar>
+                    </div>
+                  </div>
+                  <DropdownMenuItem
+                    onClick={() => {
+                      router.push("/profile");
+                    }}
+                    className="flex items-center space-x-2 cursor-pointer hover:bg-blue-50"
+                  >
                     <User className="h-4 w-4" />
-                  </div>
-                  <ChevronDown className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                align="end"
-                className="w-56 bg-white/95 backdrop-blur-sm border-white/20"
-              >
-                <div className="px-3 py-2 border-b border-gray-200 flex gap-2 justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-900">
-                      {currentUser.email}
-                    </p>
-                    <p className="text-xs text-gray-600">{currentUser.email}</p>
-                  </div>
-                  <div>
-                    <Avatar className="h-8 w-8 relative border border-full border-primary">
-                      {(profileImageFetching || profileImageLoading) && (
-                        <div className="absolute inset-0 bg-primary/10 flex items-center justify-center w-full h-full bg-primary/70">
-                          <Spinner classValues="h-4 w-4" centerAligned />
-                        </div>
-                      )}
-                      <AvatarImage
-                        src={profileImagedata?.url || undefined}
-                        alt="Profile picture"
-                      />
-                      <AvatarFallback className="bg-primary/10 text-md">
-                        {userFromDb?.full_name
-                          ? userFromDb?.full_name
-                              .split(" ")
-                              .map((n) => n[0])
-                              .join("")
-                          : "NA"}
-                      </AvatarFallback>
-                    </Avatar>
-                  </div>
-                </div>
-                <DropdownMenuItem
-                  onClick={() => {
-                    router.push("/profile");
-                  }}
-                  className="flex items-center space-x-2 cursor-pointer hover:bg-blue-50"
-                >
-                  <User className="h-4 w-4" />
-                  <span>Profile</span>
-                </DropdownMenuItem>
-                {/*<DropdownMenuItem
+                    <span>Profile</span>
+                  </DropdownMenuItem>
+                  {/*<DropdownMenuItem
                   onClick={() => {}}
                   className="flex items-center space-x-2 cursor-pointer hover:bg-blue-50"
                 >
                   <Settings className="h-4 w-4" />
                   <span>Account Settings</span>
                 </DropdownMenuItem>*/}
-                <DropdownMenuSeparator className="bg-gray-200" />
-                <DropdownMenuItem
-                  onClick={() => {
-                    onLogoutClick();
-                  }}
-                  className="flex items-center space-x-2 cursor-pointer hover:bg-red-50 text-red-600"
-                >
-                  <LogOut className="h-4 w-4" />
-                  <span>Logout</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+                  <DropdownMenuSeparator className="bg-gray-200" />
+                  <DropdownMenuItem
+                    onClick={() => {
+                      onLogoutClick();
+                    }}
+                    className="flex items-center space-x-2 cursor-pointer hover:bg-red-50 text-red-600"
+                  >
+                    <LogOut className="h-4 w-4" />
+                    <span>Logout</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
           )}
         </div>
       </div>

@@ -7,7 +7,7 @@ import {
 } from "@/lib/services/user";
 import { PasswordFormData, passwordSchema } from "../schemas/auth-schema";
 import { ValidationError } from "../errors/validation-error";
-import { serverActionWrapper } from "../server-action-wrapper";
+import { serverActionWrapperWithAuthCheck } from "../server-action-wrapper";
 import { serverProfileSchema } from "../schemas/profile-schema";
 import { getTemporaryFileName, uploadFileToServer } from "../helpers";
 import { ProfileModel } from "../models/profile";
@@ -38,7 +38,7 @@ export const changePassword = async (passwordData: PasswordFormData) => {
     return data;
   };
 
-  return serverActionWrapper(serverAction);
+  return serverActionWrapperWithAuthCheck(serverAction);
 };
 
 export const getUserProfile = async (userId: string) => {
@@ -56,7 +56,7 @@ export const getUserProfile = async (userId: string) => {
     return user;
   };
 
-  return serverActionWrapper(serverAction);
+  return serverActionWrapperWithAuthCheck(serverAction);
 };
 
 export const updateUserProfile = async (
@@ -106,5 +106,5 @@ export const updateUserProfile = async (
     };
   };
 
-  return serverActionWrapper(serverAction);
+  return serverActionWrapperWithAuthCheck(serverAction);
 };

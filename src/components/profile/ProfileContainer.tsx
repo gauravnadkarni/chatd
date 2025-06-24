@@ -17,8 +17,10 @@ import { SignInProviders } from "@/lib/types/ThirdPartyAuthProviders";
 import { Lock, User } from "lucide-react";
 import { useToast } from "@/hooks/useToast";
 import { useIsMobile } from "@/hooks/useIsMobile";
+import { useTranslations } from "next-intl";
 
 export default function ProfileContainer() {
+  const profileTranslations = useTranslations("profile");
   const { userFromAuth, userFromDb, setUserLoggingOut } = useUserStore(
     (state) => state
   );
@@ -55,14 +57,14 @@ export default function ProfileContainer() {
                 className="flex items-center gap-2 data-[state=active]:bg-white"
               >
                 <User className="h-4 w-4" />
-                Profile Info
+                {profileTranslations("profileTab.title")}
               </TabsTrigger>
               <TabsTrigger
                 value="password"
                 className="flex items-center gap-2 data-[state=active]:bg-white"
               >
                 <Lock className="h-4 w-4" />
-                Password
+                {profileTranslations("passwordTab.title")}
               </TabsTrigger>
             </TabsList>
           </CardHeader>
@@ -72,10 +74,10 @@ export default function ProfileContainer() {
             <TabsContent value="profile" className="space-y-6 mt-6">
               <div className="space-y-2">
                 <CardTitle className="text-xl text-gray-800">
-                  Profile Information
+                  {profileTranslations("profileTab.cardTitle")}
                 </CardTitle>
                 <CardDescription>
-                  Update your profile picture and display name
+                  {profileTranslations("profileTab.cardDescription")}
                 </CardDescription>
               </div>
 
@@ -86,12 +88,12 @@ export default function ProfileContainer() {
             <TabsContent value="password" className="space-y-6 mt-6">
               <div className="space-y-2">
                 <CardTitle className="text-xl text-gray-800">
-                  Change Password
+                  {profileTranslations("passwordTab.cardTitle")}
                 </CardTitle>
                 <CardDescription>
                   {isSocialLogin
-                    ? "Password management is not available for social login accounts"
-                    : "Update your account password for better security"}
+                    ? profileTranslations("passwordTab.cardDescriptionSocial")
+                    : profileTranslations("passwordTab.cardDescriptionEmail")}
                 </CardDescription>
               </div>
               {userFromAuth && (
@@ -104,7 +106,9 @@ export default function ProfileContainer() {
                     if (error) {
                       console.error(error);
                       toast.error(
-                        "We are facing problem while logging you out",
+                        profileTranslations(
+                          "passwordTab.changePasswordToastError"
+                        ),
                         {
                           position: isMobile ? "top-center" : "bottom-right",
                           duration: 3000,

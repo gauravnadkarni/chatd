@@ -57,5 +57,51 @@
     "footer": {
       "copyright": "© {year} Chatd. All rights reserved."
     }
+  },
+  "profile": {
+    "title": "Profile",
+    "description": "Manage your profile information and security settings.",
+    "profileTab": {
+      "title": "Profile Info",
+      "cardTitle": "Profile Information",
+      "cardDescription": "Update your profile picture and display name",
+      "formLabelEmail": "Email",
+      "formLabelEmailPlaceholder": "Enter your email",
+      "formLabelEmailLockedMessage": "Email address cannot be changed",
+      "formLabelName": "Name",
+      "formControlNamePlaceholder": "Enter your name",
+      "formLabelAvatar": "Avatar",
+      "formLabelAvatarDescription": "Upload a new avatar",
+      "formLabelAvatarAltText": "Profile picture",
+      "formUpdateButtonText": "Update Profile",
+      "profileUpdateSuccessToastTitle": "Profile updated successfully",
+      "profileUpdateSuccessToastDescription": "Your profile has been updated successfully",
+      "profileUpdateErrorToastTitle": "Profile update failed",
+      "profileUpdateErrorToastDescription": "Failed to update profile. Please try again."
+    },
+    "passwordTab": {
+      "title": "Password",
+      "cardTitle": "Change Password",
+      "cardDescriptionSocial": "Password management is not available for social login accounts",
+      "cardDescriptionEmail": "Update your account password for better security",
+      "changePasswordToastError": "We are facing problem while changing your password",
+      "changePasswordToastSuccess": "Password changed successfully.",
+      "changePasswordLogoutRedirectToast": "You will be redirected to login page in 3 seconds",
+      "changePasswordErrorTryAgainToast": "Please try again.",
+      "signInMethodMessage": "You signed in using {loginMethod}. Password changes must be made through your {loginMethod} account settings.",
+      "formLabelCurrentPassword": "Current Password",
+      "formLabelNewPassword": "New Password",
+      "formLabelConfirmPassword": "Confirm New Password",
+      "formCurrentPasswordPlaceholder": "Enter current password",
+      "formNewPasswordPlaceholder": "Enter new password",
+      "formConfirmPasswordPlaceholder": "Confirm new password",
+      "formUpdateButtonText": "Update Password",
+      "passwordRequirements": {
+        "title": "Password requirements",
+        "atLeast8CharactersLong": "At least 8 characters long",
+        "containsUppercaseAndLowercaseLetters": "Contains uppercase and lowercase letters",
+        "containsAtLeastOneNumber": "Contains at least one number"
+      }
+    }
   }
 }
