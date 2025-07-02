@@ -4,7 +4,6 @@ import { useState } from "react";
 import { ArrowLeft, Users, UserPlus, Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { UserSearch } from "@/components/contacts/user-search";
 import { ContactRequests } from "@/components/contacts/contact-requests";
@@ -12,6 +11,8 @@ import { ContactManagement } from "@/components/contacts/contact-management";
 import { UserProfileModal } from "@/components/contacts/user-profile-modal";
 import { useRouter } from "next/navigation";
 import { User, ContactRequest, Contact } from "@/lib/types/Users";
+import { ProfileModel } from "@/lib/types/profile";
+import { cn } from "@/lib/utils";
 
 // Mock data
 const mockContacts: Contact[] = [
@@ -112,7 +113,7 @@ const mockSentRequests: ContactRequest[] = [
 
 export function ContactsContainer() {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState("search");
+  const [activeSection, setActiveSection] = useState("requests");
 
   // State management
   const [contacts, setContacts] = useState<Contact[]>(mockContacts);
@@ -143,23 +144,7 @@ export function ContactsContainer() {
   const getBlockedUserIds = () => blockedUsers.map((b) => b.user.id);
 
   // Contact request handlers
-  const handleAddContact = (user: User) => {
-    const newRequest: ContactRequest = {
-      id: `s${Date.now()}`,
-      fromUser: {
-        id: "current-user",
-        name: "Current User",
-        email: "current@example.com",
-        avatar: "",
-        isOnline: true,
-      },
-      toUser: user,
-      status: "pending",
-      createdAt: new Date().toISOString(),
-    };
-
-    setSentRequests((prev) => [...prev, newRequest]);
-  };
+  const handleAddContact = (user: ProfileModel) => {};
 
   const handleAcceptRequest = (requestId: string) => {
     const request = receivedRequests.find((r) => r.id === requestId);
@@ -246,118 +231,164 @@ export function ContactsContainer() {
 
   const totalPendingRequests = receivedRequests.length;
 
+  // Sidebar navigation items
+  const navigationItems = [
+    {
+      key: "requests",
+      label: "Requests & Add",
+      shortLabel: "Requests",
+      icon: Bell,
+      badge: totalPendingRequests > 0 ? totalPendingRequests : null,
+    },
+    {
+      key: "manage",
+      label: "My Contacts",
+      shortLabel: "Contacts",
+      icon: Users,
+      badge: null,
+    },
+  ];
+
+  // Render content based on active section
+  const renderContent = () => {
+    switch (activeSection) {
+      case "requests":
+        return (
+          <div className="space-y-6 md:space-y-8">
+            {/* Add Contacts Section */}
+            <div className="space-y-3 md:space-y-4">
+              <div className="space-y-1 md:space-y-2">
+                <CardTitle className="text-lg md:text-xl text-gray-800">
+                  Add New Contacts
+                </CardTitle>
+                <p className="text-sm md:text-base text-gray-600">
+                  Search and connect with new contacts
+                </p>
+              </div>
+              <UserSearch
+                onAddContact={handleAddContact}
+                existingContacts={getExistingContactIds()}
+                sentRequests={getSentRequestIds()}
+                blockedUsers={getBlockedUserIds()}
+              />
+            </div>
+
+            {/* Divider */}
+            <div className="border-t border-gray-200"></div>
+
+            {/* Contact Requests Section */}
+            <div className="space-y-3 md:space-y-4">
+              <div className="space-y-1 md:space-y-2">
+                <CardTitle className="text-lg md:text-xl text-gray-800">
+                  Contact Requests
+                </CardTitle>
+                <p className="text-sm md:text-base text-gray-600">
+                  Manage incoming and outgoing contact requests
+                </p>
+              </div>
+              <ContactRequests
+                receivedRequests={receivedRequests}
+                sentRequests={sentRequests}
+                onAcceptRequest={handleAcceptRequest}
+                onRejectRequest={handleRejectRequest}
+                onCancelRequest={handleCancelRequest}
+              />
+            </div>
+          </div>
+        );
+
+      case "manage":
+        return (
+          <div className="space-y-4 md:space-y-6">
+            <div className="space-y-1 md:space-y-2">
+              <CardTitle className="text-lg md:text-xl text-gray-800">
+                Manage Contacts
+              </CardTitle>
+              <p className="text-sm md:text-base text-gray-600">
+                View, chat with, or manage your contacts and blocked users
+              </p>
+            </div>
+            <ContactManagement
+              contacts={contacts}
+              blockedUsers={blockedUsers}
+              onStartChat={handleStartChat}
+              onBlockUser={handleBlockUser}
+              onUnblockUser={handleUnblockUser}
+              onRemoveContact={handleRemoveContact}
+              onViewProfile={handleViewProfile}
+            />
+          </div>
+        );
+
+      default:
+        return null;
+    }
+  };
+
   return (
     <>
-      <div className="container mx-auto px-4 py-6 max-w-4xl">
-        {/* Main Content */}
-        <Card className="backdrop-blur-sm  shadow-xl">
-          <Tabs
-            value={activeTab}
-            onValueChange={setActiveTab}
-            className="w-full"
-          >
-            <CardHeader className="pb-4">
-              <TabsList className="grid w-full grid-cols-3 bg-gray-100">
-                <TabsTrigger
-                  value="search"
-                  className="flex items-center gap-2 data-[state=active]:bg-white"
-                >
-                  <UserPlus className="h-4 w-4" />
-                  <span className="hidden sm:inline">Add Contacts</span>
-                  <span className="sm:hidden">Add</span>
-                </TabsTrigger>
-                <TabsTrigger
-                  value="requests"
-                  className="flex items-center gap-2 data-[state=active]:bg-white"
-                >
-                  <Bell className="h-4 w-4" />
-                  <span className="hidden sm:inline">Requests</span>
-                  <span className="sm:hidden">Requests</span>
-                  {totalPendingRequests > 0 && (
-                    <Badge
-                      variant="destructive"
-                      className="ml-1 h-5 w-5 p-0 text-xs"
-                    >
-                      {totalPendingRequests}
-                    </Badge>
-                  )}
-                </TabsTrigger>
-                <TabsTrigger
-                  value="manage"
-                  className="flex items-center gap-2 data-[state=active]:bg-white"
-                >
-                  <Users className="h-4 w-4" />
-                  <span className="hidden sm:inline">My Contacts</span>
-                  <span className="sm:hidden">Contacts</span>
-                </TabsTrigger>
-              </TabsList>
-            </CardHeader>
+      <div className="container mx-auto px-2 md:px-4 py-4 md:py-6 max-w-full">
+        {/* Main Layout with Sidebar */}
+        <div className="flex gap-1 md:gap-2 h-[calc(100vh-200px)]">
+          {/* Left Sidebar */}
+          <div className="w-8 md:w-64 flex-shrink-0">
+            <Card className="h-full">
+              <CardContent className="p-0">
+                <nav className="flex flex-col">
+                  {navigationItems.map((item) => {
+                    const Icon = item.icon;
+                    const isActive = activeSection === item.key;
 
-            <CardContent className="pt-0">
-              {/* Search Tab */}
-              <TabsContent value="search" className="space-y-6 mt-6">
-                <div className="space-y-2">
-                  <CardTitle className="text-xl text-gray-800">
-                    Find New Contacts
-                  </CardTitle>
-                  <p className="text-gray-600">
-                    Search for users by name or email address to send contact
-                    requests
-                  </p>
-                </div>
+                    return (
+                      <button
+                        key={item.key}
+                        onClick={() => setActiveSection(item.key)}
+                        className={cn(
+                          "flex items-center gap-3 px-1 md:px-4 py-3 text-left transition-colors hover:bg-gray-50 border-r-2 border-transparent relative",
+                          isActive &&
+                            "bg-blue-50 border-r-blue-500 text-blue-700"
+                        )}
+                        title={item.label} // Tooltip for mobile
+                      >
+                        <Icon className="h-5 w-5 flex-shrink-0" />
+                        <span className="font-medium hidden md:block">
+                          {item.label}
+                        </span>
+                        {item.badge && (
+                          <>
+                            {/* Desktop badge */}
+                            <Badge
+                              variant="destructive"
+                              className="ml-auto h-5 w-5 p-0 text-xs items-center justify-center hidden md:flex"
+                            >
+                              {item.badge}
+                            </Badge>
+                            {/* Mobile badge - positioned absolutely */}
+                            <Badge
+                              variant="destructive"
+                              className="absolute -top-1 -right-1 h-4 w-4 p-0 text-xs flex items-center justify-center md:hidden"
+                            >
+                              {item.badge > 9 ? "9+" : item.badge}
+                            </Badge>
+                          </>
+                        )}
+                      </button>
+                    );
+                  })}
+                </nav>
+              </CardContent>
+            </Card>
+          </div>
 
-                <UserSearch
-                  onAddContact={handleAddContact}
-                  existingContacts={getExistingContactIds()}
-                  sentRequests={getSentRequestIds()}
-                  blockedUsers={getBlockedUserIds()}
-                />
-              </TabsContent>
-
-              {/* Requests Tab */}
-              <TabsContent value="requests" className="space-y-6 mt-6">
-                <div className="space-y-2">
-                  <CardTitle className="text-xl text-gray-800">
-                    Contact Requests
-                  </CardTitle>
-                  <p className="text-gray-600">
-                    Manage incoming and outgoing contact requests
-                  </p>
-                </div>
-
-                <ContactRequests
-                  receivedRequests={receivedRequests}
-                  sentRequests={sentRequests}
-                  onAcceptRequest={handleAcceptRequest}
-                  onRejectRequest={handleRejectRequest}
-                  onCancelRequest={handleCancelRequest}
-                />
-              </TabsContent>
-
-              {/* Manage Tab */}
-              <TabsContent value="manage" className="space-y-6 mt-6">
-                <div className="space-y-2">
-                  <CardTitle className="text-xl text-gray-800">
-                    Manage Contacts
-                  </CardTitle>
-                  <p className="text-gray-600">
-                    View, chat with, or manage your contacts and blocked users
-                  </p>
-                </div>
-
-                <ContactManagement
-                  contacts={contacts}
-                  blockedUsers={blockedUsers}
-                  onStartChat={handleStartChat}
-                  onBlockUser={handleBlockUser}
-                  onUnblockUser={handleUnblockUser}
-                  onRemoveContact={handleRemoveContact}
-                  onViewProfile={handleViewProfile}
-                />
-              </TabsContent>
-            </CardContent>
-          </Tabs>
-        </Card>
+          {/* Right Content Area */}
+          <div className="flex-1 min-w-0">
+            <Card className="h-full backdrop-blur-sm shadow-xl">
+              <CardContent className="p-3 md:p-6 h-full overflow-auto">
+                {renderContent()}
+              </CardContent>
+            </Card>
+          </div>
+        </div>
       </div>
 
       {/* User Profile Modal */}
@@ -385,7 +416,7 @@ export function ContactsContainer() {
         }}
         onAddContact={() => {
           if (profileModal.user) {
-            handleAddContact(profileModal.user);
+            //handleAddContact(profileModal.user);
             setProfileModal({
               isOpen: false,
               user: null,

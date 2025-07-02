@@ -1,9 +1,10 @@
 import { ServiceError } from "../errors/service-error";
-import { createUser, getById } from "../repositories/profiles";
-import { ProfileModel } from "../models/profile";
+import { createUser, getById, searchProfiles } from "../repositories/profiles";
+import { ProfileModel, SearchProfilesOptions } from "../types/profile";
 import { createClientForServer } from "../supabase-server";
+import { AppError } from "../errors/app-error";
 
-export const setupNewUser = async (
+export const setupNewProfile = async (
   authUserId: string,
   email: string,
   fullName: string
@@ -87,6 +88,58 @@ export const updateProfile = async (
     }
     throw new ServiceError(
       "An unexpected error occurred while updating your profile"
+    );
+  }
+};
+
+export const searchProfilesWhichContains = async ({
+  query,
+  limit = 10,
+  orderBy = "asc",
+  excludeIds = [],
+}: SearchProfilesOptions) => {
+  try {
+    const profiles = await searchProfiles({
+      query,
+      limit,
+      orderBy,
+      excludeIds,
+      searchMode: "contains",
+    });
+
+    return profiles;
+  } catch (error) {
+    console.error("Error searching profiles (contains):", error);
+    throw new AppError(
+      "Failed to search profiles (contains). Please try again later.",
+      500,
+      error
+    );
+  }
+};
+
+export const searchProfilesWhichStartsWith = async ({
+  query,
+  limit = 10,
+  orderBy = "asc",
+  excludeIds = [],
+}: SearchProfilesOptions) => {
+  try {
+    const profiles = await searchProfiles({
+      query,
+      limit,
+      orderBy,
+      excludeIds,
+      searchMode: "startsWith",
+    });
+
+    return profiles;
+  } catch (error) {
+    console.error("Error searching profiles (startsWith):", error);
+    throw new AppError(
+      "Failed to search profiles (startsWith). Please try again later.",
+      500,
+      error
     );
   }
 };

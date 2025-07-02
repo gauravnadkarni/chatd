@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { User } from "@supabase/supabase-js";
-import { ProfileModel } from "@/lib/models/profile";
+import { ProfileModel } from "@/lib/types/profile";
 
 type UserState = {
   userFromAuth: User | null;

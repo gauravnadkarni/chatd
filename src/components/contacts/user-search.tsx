@@ -8,59 +8,16 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { User } from "@/lib/types/Users";
+import { useSearchProfiles } from "@/hooks/useProfile";
+import Spinner from "../Spinner";
+import { ProfileModel } from "@/lib/types/profile";
 
 interface UserSearchProps {
-  onAddContact: (user: User) => void;
+  onAddContact: (user: ProfileModel) => void;
   existingContacts: string[];
   sentRequests: string[];
   blockedUsers: string[];
 }
-
-// Mock users for demonstration
-const mockUsers: User[] = [
-  {
-    id: "u1",
-    name: "Alice Johnson",
-    email: "alice@example.com",
-    avatar: "",
-    isOnline: true,
-    bio: "Software Engineer at TechCorp",
-  },
-  {
-    id: "u2",
-    name: "Bob Smith",
-    email: "bob@example.com",
-    avatar: "",
-    isOnline: false,
-    lastSeen: "2 hours ago",
-    bio: "Product Manager",
-  },
-  {
-    id: "u3",
-    name: "Carol Davis",
-    email: "carol@example.com",
-    avatar: "",
-    isOnline: true,
-    bio: "UX Designer",
-  },
-  {
-    id: "u4",
-    name: "David Wilson",
-    email: "david@example.com",
-    avatar: "",
-    isOnline: false,
-    lastSeen: "1 day ago",
-    bio: "Marketing Specialist",
-  },
-  {
-    id: "u5",
-    name: "Eva Martinez",
-    email: "eva@example.com",
-    avatar: "",
-    isOnline: true,
-    bio: "Data Scientist",
-  },
-];
 
 export function UserSearch({
   onAddContact,
@@ -69,32 +26,22 @@ export function UserSearch({
   blockedUsers,
 }: UserSearchProps) {
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState<User[]>([]);
-  const [isSearching, setIsSearching] = useState(false);
+  const {
+    data: searchResults,
+    isLoading: isSearchResultsLoading,
+    refetch: refetchSearchResults,
+  } = useSearchProfiles({
+    query: searchQuery,
+  });
   const [showResults, setShowResults] = useState(false);
 
   useEffect(() => {
     const searchUsers = async () => {
       if (searchQuery.trim().length < 2) {
-        setSearchResults([]);
-        setShowResults(false);
         return;
       }
-
-      setIsSearching(true);
-
-      // Simulate API call delay
-      await new Promise((resolve) => setTimeout(resolve, 300));
-
-      const results = mockUsers.filter(
-        (user) =>
-          user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          user.email.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-
-      setSearchResults(results);
+      refetchSearchResults();
       setShowResults(true);
-      setIsSearching(false);
     };
 
     const debounceTimer = setTimeout(searchUsers, 300);
@@ -103,7 +50,6 @@ export function UserSearch({
 
   const handleClearSearch = () => {
     setSearchQuery("");
-    setSearchResults([]);
     setShowResults(false);
   };
 
@@ -140,15 +86,18 @@ export function UserSearch({
   };
 
   return (
-    <div className="relative">
+    <div className="relative w-full md:w-1/2 xl:w-1/4">
       <div className="relative">
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
         <Input
           type="text"
           placeholder="Search users by name or email..."
           value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="pl-10 pr-10 bg-white/10 border-white/20 focus:bg-white/20"
+          onChange={(e) => {
+            if (e.target.value.length === 0) handleClearSearch();
+            else setSearchQuery(e.target.value);
+          }}
+          className="pl-10 pr-10 bg-secondary/10 border-primary/20 focus:bg-primary/40"
         />
         {searchQuery && (
           <button
@@ -158,21 +107,20 @@ export function UserSearch({
             <X className="h-4 w-4" />
           </button>
         )}
-        {isSearching && (
-          <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-            <Loader2 className="h-4 w-4 animate-spin text-white/60" />
-          </div>
-        )}
       </div>
 
       {showResults && (
         <Card className="absolute top-full left-0 right-0 mt-2 z-50 bg-white/95 backdrop-blur-sm border-white/20 shadow-xl max-h-80 overflow-y-auto">
           <CardContent className="p-2">
-            {searchResults.length === 0 ? (
-              <div className="text-center py-4 text-gray-500">
-                No users found matching "{searchQuery}"
-              </div>
-            ) : (
+            {isSearchResultsLoading && <Spinner centerAligned />}
+            {!isSearchResultsLoading &&
+              searchResults &&
+              searchResults.length === 0 && (
+                <div className="text-center py-4 text-gray-500">
+                  No users found matching "{searchQuery}"
+                </div>
+              )}
+            {searchResults && searchResults.length > 0 && (
               <div className="space-y-1">
                 {searchResults.map((user) => {
                   const status = getContactStatus(user.id);
@@ -183,40 +131,43 @@ export function UserSearch({
                     >
                       <div className="relative">
                         <Avatar className="h-10 w-10 border border-primary">
-                          <AvatarImage src={user.avatar} alt={user.name} />
+                          <AvatarImage
+                            src={user.avatar_file_name || ""}
+                            alt={user.full_name || ""}
+                          />
                           <AvatarFallback className="">
-                            {user.name
-                              .split(" ")
+                            {user
+                              .full_name!.split(" ")
                               .map((n) => n[0])
                               .join("")
                               .toUpperCase()}
                           </AvatarFallback>
                         </Avatar>
-                        {user.isOnline && (
+                        {/*user.isOnline && (
                           <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
-                        )}
+                        )*/}
                       </div>
 
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
                           <p className="font-medium text-gray-900 truncate">
-                            {user.name}
+                            {user.full_name}
                           </p>
                           {getStatusBadge(status)}
                         </div>
                         <p className="text-sm text-gray-500 truncate">
                           {user.email}
                         </p>
-                        {user.bio && (
+                        {/*{user.bio && (
                           <p className="text-xs text-gray-400 truncate">
                             {user.bio}
                           </p>
-                        )}
-                        {!user.isOnline && user.lastSeen && (
+                        )}*/}
+                        {/* {!user.isOnline && user.lastSeen && (
                           <p className="text-xs text-gray-400">
                             Last seen {user.lastSeen}
                           </p>
-                        )}
+                        )}*/}
                       </div>
 
                       {status === "none" && (

@@ -3,14 +3,16 @@
 import {
   changeUserPassword,
   getUserById,
+  searchProfilesWhichContains,
+  searchProfilesWhichStartsWith,
   updateProfile,
-} from "@/lib/services/user";
+} from "@/lib/services/profile";
 import { PasswordFormData, passwordSchema } from "../schemas/auth-schema";
 import { ValidationError } from "../errors/validation-error";
 import { serverActionWrapperWithAuthCheck } from "../server-action-wrapper";
 import { serverProfileSchema } from "../schemas/profile-schema";
 import { getTemporaryFileName, uploadFileToServer } from "../helpers";
-import { ProfileModel } from "../models/profile";
+import { ProfileModel } from "../types/profile";
 
 const SUPABASE_USER_STORAGE_BUCKET_NAME =
   process.env.NEXT_PUBLIC_SUPABASE_USER_STORAGE_BUCKET_NAME;
@@ -104,6 +106,41 @@ export const updateUserProfile = async (
     return {
       ...dataToBePersisted,
     };
+  };
+
+  return serverActionWrapperWithAuthCheck(serverAction);
+};
+
+export const searchProfiles = async ({
+  query,
+  limit = 10,
+  orderBy = "asc",
+  excludeIds = [],
+  contains = false,
+}: {
+  query: string;
+  limit?: number;
+  orderBy?: "asc" | "desc";
+  excludeIds?: string[];
+  contains?: boolean;
+}) => {
+  const serverAction = async () => {
+    if (!query.trim()) {
+      return [];
+    }
+
+    const searchFunction = contains
+      ? searchProfilesWhichContains
+      : searchProfilesWhichStartsWith;
+
+    const profiles = await searchFunction({
+      query: query.trim(),
+      limit,
+      excludeIds,
+      orderBy,
+    });
+
+    return profiles;
   };
 
   return serverActionWrapperWithAuthCheck(serverAction);

@@ -1,5 +1,8 @@
-import { getUserProfile, updateUserProfile } from "@/lib/actions/user";
-import useUserStore from "@/lib/store/useUserStore";
+import {
+  getUserProfile,
+  searchProfiles,
+  updateUserProfile,
+} from "@/lib/actions/profiles";
 import { createClientForBrowser } from "@/lib/supabase-client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -87,5 +90,44 @@ export const useProfileImage = (avatarPath: string | null | undefined) => {
         ? 1000 * 60 // Check every minute when close to expiration
         : false;
     },
+  });
+};
+
+export const useSearchProfiles = ({
+  query,
+  limit = 10,
+  orderBy = "desc",
+  excludeIds = [],
+  contains = false,
+}: {
+  query: string;
+  limit?: number;
+  orderBy?: "asc" | "desc";
+  excludeIds?: string[];
+  contains?: boolean;
+}) => {
+  return useQuery({
+    queryKey: [
+      "searchProfiles",
+      { query, limit, orderBy, excludeIds, contains },
+    ],
+    queryFn: async () => {
+      if (!query.trim()) {
+        return []; // Return empty array for empty queries
+      }
+      const response = await searchProfiles({
+        query,
+        limit,
+        orderBy,
+        excludeIds,
+        contains,
+      });
+      if ("error" in response) {
+        throw new Error("Unable to search profiles");
+      }
+      return response.data;
+    },
+    enabled: query.trim().length > 0,
+    refetchOnWindowFocus: false,
   });
 };

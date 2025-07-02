@@ -1,5 +1,5 @@
 import prisma from "@/lib/prisma";
-import { ProfileModel } from "../models/profile";
+import { ProfileModel, SearchProfilesOptions } from "../types/profile";
 
 export const createUser = async (
   userId: string,
@@ -43,3 +43,33 @@ export const update = async (
     where: { id },
     data: profileData,
   });
+
+export const searchProfiles = async ({
+  query,
+  limit = 10,
+  orderBy = "asc",
+  excludeIds = [],
+  searchMode = "contains",
+}: SearchProfilesOptions): Promise<ProfileModel[]> => {
+  return prisma.profile.findMany({
+    where: {
+      full_name:
+        searchMode === "contains"
+          ? {
+              contains: query,
+              mode: "insensitive",
+            }
+          : {
+              startsWith: query,
+              mode: "insensitive",
+            },
+      id: {
+        notIn: excludeIds,
+      },
+    },
+    take: limit,
+    orderBy: {
+      full_name: orderBy,
+    },
+  });
+};

@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import useUserStore from "@/lib/store/useUserStore";
 import Spinner from "../Spinner";
-import { ProfileModel } from "@/lib/models/profile";
+import { ProfileModel } from "@/lib/types/profile";
 
 interface AuthStateProps {
   userFromAuth: User | null; // User passed from the Server Layout

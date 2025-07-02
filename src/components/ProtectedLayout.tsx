@@ -3,7 +3,7 @@ import { redirect } from "@/lib/i18n/navigation";
 import AuthState from "./auth/AuthState";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
-import { getUserById } from "@/lib/services/user";
+import { getUserById } from "@/lib/services/profile";
 
 export async function ProtectedLayout({
   children,

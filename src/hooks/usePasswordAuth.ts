@@ -1,5 +1,5 @@
 import { signin, signup } from "@/lib/actions/auth";
-import { changePassword } from "@/lib/actions/user";
+import { changePassword } from "@/lib/actions/profiles";
 import { AppError } from "@/lib/errors/app-error";
 import {
   PasswordFormData,

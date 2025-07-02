@@ -1,3 +1,5 @@
+import { ProfileModel } from "./profile";
+
 export interface User {
   id: string;
   name: string;
@@ -11,7 +13,7 @@ export interface User {
 export interface ContactRequest {
   id: string;
   fromUser: User;
-  toUser: User;
+  toUser: ProfileModel;
   status: "pending" | "accepted" | "rejected";
   createdAt: string;
   message?: string;

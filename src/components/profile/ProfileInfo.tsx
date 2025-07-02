@@ -24,7 +24,7 @@ import {
   FormLabel,
   FormMessage,
 } from "../ui/form";
-import { ProfileModel } from "@/lib/models/profile";
+import { ProfileModel } from "@/lib/types/profile";
 import {
   useGetProfile,
   useProfileImage,
